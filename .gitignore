@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+*.local
+.DS_Store
+
+# Evidence bundles ARE versioned on purpose: harness verdicts must bind to a
+# commit SHA. Only the raw video blobs Playwright leaves behind are excluded.
+evidence/**/video/*.tmp
+test-results/
+playwright-report/

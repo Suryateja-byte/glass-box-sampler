@@ -1,0 +1,76 @@
+{
+  "outcomes": [
+    {
+      "mock": "green",
+      "consoleClean": true,
+      "frameVerdict": "PASS",
+      "framesP50": 6.099999999999909,
+      "framesP95": 6.200000000000273,
+      "framesSpanMs": 2103,
+      "motionViolations": 0,
+      "motionPass": true,
+      "viewportPass": true,
+      "deterministic": true
+    },
+    {
+      "mock": "jank",
+      "consoleClean": true,
+      "frameVerdict": "FAIL",
+      "framesP50": 30.300000000000182,
+      "framesP95": 36.5,
+      "framesSpanMs": 1958,
+      "motionViolations": 0,
+      "motionPass": true,
+      "viewportPass": true,
+      "deterministic": true
+    },
+    {
+      "mock": "noisy",
+      "consoleClean": false,
+      "frameVerdict": "PASS",
+      "framesP50": 6.099999999999909,
+      "framesP95": 12.199999999999932,
+      "framesSpanMs": 2733,
+      "motionViolations": 0,
+      "motionPass": true,
+      "viewportPass": true,
+      "deterministic": true
+    },
+    {
+      "mock": "nondet",
+      "consoleClean": true,
+      "frameVerdict": "PASS",
+      "framesP50": 6.099999999999909,
+      "framesP95": 12.199999999999932,
+      "framesSpanMs": 2739,
+      "motionViolations": 0,
+      "motionPass": true,
+      "viewportPass": true,
+      "deterministic": false
+    },
+    {
+      "mock": "motion",
+      "consoleClean": true,
+      "frameVerdict": "PASS",
+      "framesP50": 6.099999999999909,
+      "framesP95": 12.099999999999909,
+      "framesSpanMs": 2733,
+      "motionViolations": 10,
+      "motionPass": false,
+      "viewportPass": true,
+      "deterministic": true
+    },
+    {
+      "mock": "overflow",
+      "consoleClean": true,
+      "frameVerdict": "PASS",
+      "framesP50": 6.099999999999909,
+      "framesP95": 12.100000000000023,
+      "framesSpanMs": 2830,
+      "motionViolations": 0,
+      "motionPass": true,
+      "viewportPass": false,
+      "deterministic": true
+    }
+  ]
+}
