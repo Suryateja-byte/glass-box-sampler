@@ -34,7 +34,9 @@ describe('softmaxTemperature', () => {
 
       expect(out.length).toBe(testCase.expected.length);
       for (let i = 0; i < testCase.expected.length; i += 1) {
-        expect(out[i]).toBeCloseTo(testCase.expected[i]!, 6);
+        // The gate is stated as 1e-6, so it is asserted as 1e-6 rather than as
+        // a decimal-places count that happens to be near it.
+        expect(Math.abs(out[i]! - testCase.expected[i]!)).toBeLessThan(TOLERANCE);
       }
     });
   }
@@ -109,7 +111,7 @@ describe('applyNucleus (top-p truncation and renormalisation)', () => {
 
       expect(kept).toBe(testCase.expectedKept);
       for (let i = 0; i < testCase.expected.length; i += 1) {
-        expect(out[i]).toBeCloseTo(testCase.expected[i]!, 6);
+        expect(Math.abs(out[i]! - testCase.expected[i]!)).toBeLessThan(TOLERANCE);
       }
       // Everything outside the nucleus must be exactly zero, not merely small:
       // the bars read this array directly to decide what is excluded.

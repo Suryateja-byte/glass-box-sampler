@@ -1,0 +1,245 @@
+/**
+ * Design tokens. Values only -- no component styles live here.
+ *
+ * The palette is a single cool-grey ramp plus exactly one accent (cyan-blue,
+ * hue ~200), reserved for two meanings and nothing else: the token that was
+ * committed, and the primary action. Everything structural is ink and hairline,
+ * so the one saturated thing on screen is always the answer to "what got
+ * chosen". Surprisal is carried by a warm wash behind the text -- a second,
+ * orthogonal hue family used as tint rather than as a third accent.
+ *
+ * Every contrast ratio below is computed against the WCAG 2.1 formula and
+ * stated for the worst-case surface of the pair, not the flattering one.
+ */
+
+:root {
+  /* ------------------------------------------------------------ colour: light
+   *
+   * Two surfaces, not one: the app ground is a hair off white and panels are
+   * pure white, so a panel reads as raised from a 1.03:1 luminance step plus a
+   * hairline -- no shadow required.
+   */
+  --surface: #fbfbfc;
+  --surface-raised: #ffffff;
+
+  /* Hairlines are deliberately below text contrast; they are edges, not
+   * information, and WCAG 1.4.11 does not apply to purely decorative bounds. */
+  --border: #e4e5e9; /* 1.22:1 on --surface -- visible edge, silent */
+  --border-strong: #d6d8de; /* 1.43:1 on --surface-raised -- inputs, focusable bounds */
+
+  /* Text ramp. Ratios are the worst case across BOTH surfaces above. */
+  --text-muted: #646a73; /* 5.27:1 on --surface, 5.45:1 on --surface-raised -- AA */
+  --text-secondary: #4a505a; /* 7.85:1 on --surface, 8.12:1 on --surface-raised -- AA */
+  --text-primary: #14161a; /* 17.51:1 on --surface, 18.11:1 on --surface-raised -- AAA */
+
+  /* The one accent. Dark enough to pass AA as body text, which is what lets it
+   * label the chosen token inline rather than only fill a shape. */
+  --accent: #0a6c9e; /* 5.56:1 on --surface, 5.75:1 on --surface-raised -- AA */
+  --accent-strong: #085887; /* hover/active. 7.37:1 on --surface -- AA */
+  --accent-on: #ffffff; /* text on an --accent fill: 5.75:1 -- AA */
+  --accent-soft: rgb(10 108 158 / 0.08); /* selected-row wash; --text-primary over it: 16.13:1 */
+
+  /* ------------------------------------------------------------ surprisal
+   *
+   * Five steps of -log2 p, low to high, applied as a BACKGROUND wash behind
+   * token text -- not as a text colour. Tinting the glyphs themselves is the
+   * obvious move and the wrong one: it spends the text's contrast budget on a
+   * secondary variable, and five legible text colours in two themes is not a
+   * solvable problem. A wash leaves every token at --text-primary (12.41:1 at
+   * the strongest step, still AAA) and reads as a highlighter, which is what it
+   * means.
+   *
+   * Step 1 is fully transparent on purpose. Most tokens are unsurprising; if
+   * every token were tinted, the tint would carry no signal and the completion
+   * would look like a heat map of nothing.
+   *
+   * Alpha rather than opaque hex so the wash composites correctly over either
+   * surface. Redundant channel: --surprisal-underline-* below. Colour is never
+   * the only carrier -- see WCAG 1.4.1.
+   *
+   * CONSTRAINT for consumers: only --text-primary may sit on these. Muted text
+   * on step 5 measures 3.74:1 and fails AA.
+   */
+  --surprisal-1: transparent; /* expected */
+  --surprisal-2: rgb(180 83 9 / 0.06);
+  --surprisal-3: rgb(180 83 9 / 0.12);
+  --surprisal-4: rgb(180 83 9 / 0.19);
+  --surprisal-5: rgb(180 83 9 / 0.27); /* long shot. --text-primary over it: 12.41:1 -- AAA */
+
+  /* The second channel, so surprisal survives greyscale and colour-blindness.
+   * Thickness, not colour: a rule under the token, absent at step 1. */
+  --surprisal-underline-1: 0;
+  --surprisal-underline-2: 1px;
+  --surprisal-underline-3: 1px;
+  --surprisal-underline-4: 2px;
+  --surprisal-underline-5: 2px;
+  --surprisal-underline-color: #b45309; /* 4.86:1 on --surface, 5.02:1 on --surface-raised -- AA
+                                         * even though a rule is not text, so the redundant
+                                         * channel is never the weaker one */
+
+  /* ------------------------------------------------------------ bars
+   *
+   * The top-k panel. Neutral fill for candidates, accent for the one committed,
+   * heavily dimmed for candidates top-p threw away.
+   */
+  --bar-track: rgb(0 0 0 / 0.05); /* composites to #f2f2f2 on --surface-raised */
+  --bar-fill: #6e747e; /* 4.20:1 on the composited track -- clears 1.4.11's 3:1 */
+  --bar-fill-chosen: var(--accent); /* 5.14:1 on the track */
+  --bar-fill-dimmed: #abb0b8; /* excluded by top-p. 1.95:1 on track, 2.16:1 vs --bar-fill.
+                               * Deliberately below 3:1: "discarded" is the one state that
+                               * should recede. It is never colour-only -- the cutoff rule
+                               * sits above it and the row's aria description says so. */
+
+  /* The nucleus cutoff. Drawn in ink, not colour, so the accent keeps meaning
+   * "chosen"; consumers should dash it so it reads as annotation, not data. */
+  --bar-cutoff: #4a505a; /* 8.12:1 on --surface-raised */
+
+  /* ------------------------------------------------------------ focus */
+  --focus-ring: var(--accent); /* 5.56:1 against --surface -- clears 1.4.11's 3:1 */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* ------------------------------------------------------------ type
+   *
+   * System stacks only. A webfont would put a network round trip on the LCP
+   * path for a page whose whole point is that numbers update every frame.
+   */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Applied via `font-variant-numeric`. Every readout on screen changes each
+   * frame; proportional digits make them jitter horizontally, which reads as
+   * instability in the app rather than movement in the data. */
+  --font-numeric: tabular-nums;
+
+  /* Six steps, tight ratio (~1.08-1.29). A dense instrument needs a small
+   * number of closely spaced sizes; wide jumps would turn a control panel into
+   * a landing page. Line-heights are explicit px so rows align to the 4px grid. */
+  --fs-micro: 11px;
+  --lh-micro: 16px; /* axis ticks, rank numbers, units */
+  --fs-xs: 12px;
+  --lh-xs: 16px; /* control labels, table headers */
+  --fs-sm: 13px;
+  --lh-sm: 18px; /* secondary prose, captions */
+  --fs-md: 14px;
+  --lh-md: 20px; /* UI default */
+  --fs-lg: 17px;
+  --lh-lg: 26px; /* the completion itself -- the only reading-length text */
+  --fs-xl: 22px;
+  --lh-xl: 28px; /* app title, section titles */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --tracking-tight: -0.011em; /* >=17px only; system faces track loose when scaled up */
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em; /* small caps / uppercase micro labels, which need the air */
+
+  /* ------------------------------------------------------------ space
+   * 4px base. Every gap, pad and row height should be one of these. */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Small radii only. At 2-4px a corner reads as machined; at 8px+ it reads as
+   * a consumer app, and a pill button would fight everything else here. */
+  --radius-xs: 2px; /* bars, chips, token cells */
+  --radius-sm: 3px; /* buttons, inputs */
+  --radius-md: 4px; /* panels, popovers */
+  --radius-round: 50%; /* slider thumbs and dot markers only -- shape, not style */
+
+  --border-width: 1px;
+
+  /* The only shadow in the system, and only for surfaces that leave the flow
+   * (popover, menu). In-flow elevation is a hairline plus --surface-raised. */
+  --shadow-popover: 0 4px 12px rgb(16 18 22 / 0.1), 0 1px 2px rgb(16 18 22 / 0.08);
+
+  /* ------------------------------------------------------------ motion
+   *
+   * Short by policy. Motion here is confirmation that a value changed, never
+   * decoration, and the app streams a token roughly every 80ms in demo cadence.
+   */
+  --dur-bar: 70ms; /* MUST stay under the streaming cadence: a bar that has not
+                    * settled before the next token arrives never shows a true
+                    * length, which makes the chart decorative. */
+  --dur-fast: 80ms; /* hover, press, focus */
+  --dur-token: 110ms; /* a token entering the completion */
+  --dur-base: 140ms; /* selection, panel content swap */
+  --dur-slow: 220ms; /* branch trail reflow, mode switch */
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1); /* decisive settle, no overshoot */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bar: linear; /* a bar is a readout: linear keeps the length proportional
+                       * to elapsed time instead of lingering at a wrong value */
+}
+
+/* --------------------------------------------------------------- colour: dark
+ *
+ * Not an inversion. The dark ground is near-black so the accent and the warm
+ * surprisal wash stay the only chromatic things on screen; the ramp is
+ * recompressed because light text on dark gains apparent weight, so the
+ * secondary and muted steps sit relatively lighter than their light-mode twins.
+ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #0b0c0e;
+    --surface-raised: #131519;
+
+    --border: #262930; /* 1.34:1 on --surface */
+    --border-strong: #2c2f37; /* 1.37:1 on --surface-raised */
+
+    --text-muted: #949aa4; /* 6.91:1 on --surface, 6.46:1 on --surface-raised -- AA */
+    --text-secondary: #bfc4cc; /* 11.17:1 on --surface, 10.43:1 on --surface-raised -- AAA */
+    --text-primary: #f1f2f4; /* 17.47:1 on --surface, 16.32:1 on --surface-raised -- AAA */
+
+    --accent: #4fa8dc; /* 7.42:1 on --surface, 6.93:1 on --surface-raised -- AA */
+    --accent-strong: #7cc3e8; /* hover/active. 9.42:1 on --surface-raised -- AAA */
+    --accent-on: #0b0c0e; /* ink on an --accent fill: 7.42:1 -- AA. Dark-on-light,
+                           * because a light-on-mid-blue button at this lightness
+                           * cannot reach 4.5:1 without darkening the fill until it
+                           * disappears into the ground. */
+    --accent-soft: rgb(79 168 220 / 0.14); /* --text-primary over it: 13.13:1 */
+
+    /* Warm wash inverts to a light ink at low alpha: the same hue family, but
+     * adding light rather than removing it, so the tint still reads as "warm"
+     * against a near-black ground. */
+    --surprisal-1: transparent;
+    --surprisal-2: rgb(251 191 36 / 0.07);
+    --surprisal-3: rgb(251 191 36 / 0.13);
+    --surprisal-4: rgb(251 191 36 / 0.2);
+    --surprisal-5: rgb(251 191 36 / 0.28); /* --text-primary over it: 8.35:1 -- AAA */
+    --surprisal-underline-color: #fbbf24; /* 10.95:1 on --surface-raised, 11.72:1 on --surface */
+
+    --bar-track: rgb(255 255 255 / 0.07); /* composites to #242529 on --surface-raised */
+    --bar-fill: #767d88; /* 3.69:1 on the composited track */
+    --bar-fill-dimmed: #454a54; /* 1.72:1 on track, 2.14:1 vs --bar-fill */
+    --bar-cutoff: #bfc4cc; /* 10.43:1 on --surface-raised */
+
+    --shadow-popover: 0 4px 12px rgb(0 0 0 / 0.5), 0 1px 2px rgb(0 0 0 / 0.4);
+  }
+}
+
+/* ----------------------------------------------------------- reduced motion
+ *
+ * The single place motion is switched off. Every animated property in the app
+ * reads its duration from one of these tokens, so zeroing them here removes
+ * motion everywhere -- including transitions attached at runtime -- without any
+ * component needing its own media query. Easing tokens are left alone: at 0s
+ * they are inert, and overriding them would only add noise to the cascade.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-bar: 0s;
+    --dur-fast: 0s;
+    --dur-token: 0s;
+    --dur-base: 0s;
+    --dur-slow: 0s;
+  }
+}

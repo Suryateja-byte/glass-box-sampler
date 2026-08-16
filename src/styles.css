@@ -1,0 +1,562 @@
+/*
+ * Layout and components. All colour, type, spacing and motion values come from
+ * design-tokens.css -- nothing here invents one.
+ *
+ * The rule that matters for the frame-time gate: only `transform` and `opacity`
+ * are ever animated, and the bar rows have fixed geometry, so a bar update
+ * cannot trigger layout. Anything that would reflow during streaming is either
+ * given a fixed size or wrapped in `contain`.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+  line-height: var(--lh-md);
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(button, input, select, textarea) {
+  font: inherit;
+  color: inherit;
+}
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-xs);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ header */
+
+#app {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-8);
+}
+
+.app-header {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-5);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+.app-title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+
+.app-subtitle {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+/* ------------------------------------------------------------------ layout */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  grid-template-areas:
+    'controls candidates'
+    'completion completion';
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.layout > .panel:nth-child(1) {
+  grid-area: controls;
+}
+.layout > .panel:nth-child(2) {
+  grid-area: candidates;
+}
+.layout > .panel:nth-child(3) {
+  grid-area: completion;
+}
+
+.panel {
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.panel-title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+}
+
+.panel-hint {
+  margin: 0 0 var(--space-4);
+  max-width: 68ch;
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+}
+
+/* ---------------------------------------------------------------- controls */
+
+.field {
+  margin: 0 0 var(--space-4);
+  border: 0;
+  padding: 0;
+}
+
+.field-compact {
+  margin-bottom: var(--space-3);
+}
+
+.field-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.field-hint {
+  margin: var(--space-1) 0 0;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-muted);
+}
+
+.prompt-input,
+.text-input,
+.select {
+  width: 100%;
+  padding: var(--space-2);
+  background: var(--surface);
+  color: var(--text-primary);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+.prompt-input {
+  font-family: var(--font-mono);
+  resize: vertical;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.button {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+  color: var(--text-primary);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button-primary {
+  background: var(--accent);
+  color: var(--accent-on);
+  border-color: var(--accent);
+}
+
+.button-primary:hover:not(:disabled) {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.demo-hint {
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+}
+
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-right: var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.live-config {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border);
+}
+
+.error-banner {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+}
+
+/* ----------------------------------------------------------------- sliders */
+
+.sliders {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.slider-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.slider-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.slider-value {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-xs);
+  color: var(--text-primary);
+  /* Fixed width and contained: this text changes on every frame of a drag, and
+     a shifting width would drag the label around with it. */
+  min-width: 4ch;
+  text-align: right;
+  contain: content;
+}
+
+.slider-field input[type='range'] {
+  width: 100%;
+  margin: var(--space-1) 0 0;
+  accent-color: var(--accent);
+}
+
+.slider-hint {
+  margin: var(--space-1) 0 0;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-muted);
+}
+
+/* -------------------------------------------------------------------- bars */
+
+.bars {
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+}
+
+.bar-row {
+  position: relative;
+  height: 1.75rem;
+}
+
+.bar-button {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--space-1);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-xs);
+  text-align: left;
+  cursor: pointer;
+}
+
+.bar-button:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.bar-button:disabled {
+  cursor: default;
+}
+
+.bar-rank {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.bar-token {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-primary);
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-track {
+  position: relative;
+  height: 0.75rem;
+  background: var(--bar-track);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: var(--bar-fill);
+  /* Only transform is animated, so this runs on the compositor. The duration is
+     shorter than the fastest streaming cadence on purpose: a bar still moving
+     when the next token lands never shows a true length. */
+  transition: transform var(--dur-bar) var(--ease-bar);
+}
+
+/* During a drag the fills track the pointer exactly. A transition here would
+   make every bar chase the slider a beat behind, which reads as lag no matter
+   how fast the frames are. */
+.bars.is-dragging .bar-fill {
+  transition: none;
+}
+
+.bar-percent {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  color: var(--text-secondary);
+  text-align: right;
+  contain: content;
+}
+
+.bar-row.is-chosen .bar-fill {
+  background: var(--bar-fill-chosen);
+}
+
+.bar-row.is-chosen .bar-token {
+  font-weight: var(--weight-semibold);
+}
+
+/* Excluded candidates keep their real length and lose contrast. Collapsing them
+   to zero would hide the very thing top-p is being shown to demonstrate. */
+.bar-row.is-excluded .bar-fill {
+  background: var(--bar-fill-dimmed);
+}
+
+.bar-row.is-excluded .bar-token,
+.bar-row.is-excluded .bar-percent {
+  color: var(--text-muted);
+}
+
+.bar-row.is-excluded .bar-percent {
+  text-decoration: line-through;
+}
+
+.bar-row.is-empty {
+  opacity: 0.35;
+}
+
+/* The nucleus boundary is drawn on the last kept row, so no geometry has to be
+   measured to place it. */
+.bar-row.is-nucleus-edge::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--bar-cutoff);
+}
+
+.tail-caption {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------- stats */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border);
+}
+
+.stat-label {
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.stat-value {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  contain: content;
+}
+
+/* ------------------------------------------------------------------ stream */
+
+.stream {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 6rem;
+}
+
+.stream-placeholder {
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+}
+
+.tok {
+  border-radius: var(--radius-xs);
+  /* Surprisal is carried by tint AND underline weight. Colour alone would put
+     it out of reach of a colour-blind reader. */
+  text-decoration: underline;
+  text-decoration-color: var(--surprisal-underline-color);
+  text-underline-offset: 0.22em;
+  cursor: pointer;
+}
+
+.tok-s0 {
+  background: var(--surprisal-1);
+  text-decoration-thickness: var(--surprisal-underline-1);
+}
+.tok-s1 {
+  background: var(--surprisal-2);
+  text-decoration-thickness: var(--surprisal-underline-2);
+}
+.tok-s2 {
+  background: var(--surprisal-3);
+  text-decoration-thickness: var(--surprisal-underline-3);
+}
+.tok-s3 {
+  background: var(--surprisal-4);
+  text-decoration-thickness: var(--surprisal-underline-4);
+}
+.tok-s4 {
+  background: var(--surprisal-5);
+  text-decoration-thickness: var(--surprisal-underline-5);
+}
+
+.tok.is-selected {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.tok-forced {
+  font-weight: var(--weight-semibold);
+}
+
+/* ------------------------------------------------------------------- trail */
+
+.trail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+  min-height: 1.75rem;
+}
+
+.trail-chip {
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.trail-chip.is-current {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.trail-separator {
+  color: var(--text-muted);
+}
+
+/* -------------------------------------------------------------- responsive */
+
+@media (max-width: 860px) {
+  #app {
+    padding: var(--space-4) var(--space-3) var(--space-6);
+  }
+
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'controls'
+      'candidates'
+      'completion';
+  }
+
+  /* The token column gives way first: the bar itself carries the comparison, so
+     it keeps its width down to the narrowest viewport. */
+  .bar-button {
+    grid-template-columns: 1.25rem minmax(3.5rem, 5rem) minmax(0, 1fr) 3.75rem;
+    gap: var(--space-1);
+  }
+
+  .app-title {
+    font-size: var(--fs-lg);
+    line-height: var(--lh-lg);
+  }
+}

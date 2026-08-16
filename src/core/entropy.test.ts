@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { entropyBits, surprisalBits } from './entropy';
 import { ENTROPY_CASES, SURPRISAL_CASES } from './reference-values.generated';
 
+/** The gate as stated: within 1e-6 of the independently derived reference. */
+const TOLERANCE = 1e-6;
+
 function f64(values: readonly number[]): Float64Array {
   return Float64Array.from(values);
 }
@@ -10,7 +13,9 @@ describe('entropyBits', () => {
   for (const testCase of ENTROPY_CASES) {
     it(`${testCase.name}: ${testCase.note}`, () => {
       const probs = f64(testCase.input);
-      expect(entropyBits(probs, probs.length)).toBeCloseTo(testCase.expected, 6);
+      expect(Math.abs(entropyBits(probs, probs.length) - testCase.expected)).toBeLessThan(
+        TOLERANCE,
+      );
     });
   }
 
@@ -54,7 +59,9 @@ describe('entropyBits', () => {
 describe('surprisalBits', () => {
   for (const testCase of SURPRISAL_CASES) {
     it(`${testCase.name}: ${testCase.note}`, () => {
-      expect(surprisalBits(testCase.input[0]!)).toBeCloseTo(testCase.expected, 6);
+      expect(Math.abs(surprisalBits(testCase.input[0]!) - testCase.expected)).toBeLessThan(
+        TOLERANCE,
+      );
     });
   }
 

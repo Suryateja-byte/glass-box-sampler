@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glass-Box Sampler — how a language model picks each token</title>
+    <meta
+      name="description"
+      content="An interactive view of LLM token sampling: the top-10 candidate distribution behind every token, and what temperature and top-p do to it."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <!--
+      The shell is deliberately thin. The header below paints before any module
+      evaluates, which gives the largest contentful paint something real to land
+      on, and the skeleton is sized so the app replacing it shifts nothing.
+    -->
+    <main id="app">
+      <header class="app-header">
+        <h1 class="app-title">Glass-Box Sampler</h1>
+        <p class="app-subtitle">
+          The candidate distribution behind every token a language model writes, and what
+          temperature and top-p do to it.
+        </p>
+      </header>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

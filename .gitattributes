@@ -1,0 +1,5 @@
+# Evidence bundles are hash-bound in manifest.json, so line endings must not
+# drift between checkouts or every artifact hash changes for no reason.
+* text=auto eol=lf
+*.png binary
+*.webm binary

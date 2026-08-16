@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Glass-Box Sampler — build progress</title>
+    <style>
+      /* Self-contained on purpose: this file is opened directly from disk, where
+         fetching the evidence JSON would be blocked. It is rewritten at each
+         milestone instead. */
+      :root {
+        color-scheme: light dark;
+        --surface: #fbfbfc;
+        --raised: #ffffff;
+        --border: #e3e5e8;
+        --text: #16181b;
+        --muted: #5c636b;
+        --accent: #0a6c9e;
+        --pass: #1a7f4b;
+        --fail: #b3261e;
+        --pending: #8a9199;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #0b0c0e;
+          --raised: #141619;
+          --border: #282b30;
+          --text: #f2f4f6;
+          --muted: #9aa1a9;
+          --accent: #4fa8dc;
+          --pass: #4ec98a;
+          --fail: #ef8880;
+          --pending: #6b7279;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 40px 24px 72px;
+        background: var(--surface);
+        color: var(--text);
+        font: 14px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      main { max-width: 940px; margin: 0 auto; }
+      h1 { font-size: 22px; letter-spacing: -0.01em; margin: 0 0 4px; }
+      .sub { color: var(--muted); margin: 0 0 32px; font-size: 13px; }
+      h2 {
+        font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;
+        color: var(--muted); margin: 36px 0 12px; font-weight: 600;
+      }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td {
+        text-align: left; padding: 8px 10px;
+        border-bottom: 1px solid var(--border); vertical-align: top;
+      }
+      th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+      .card { background: var(--raised); border: 1px solid var(--border); border-radius: 6px; padding: 4px 14px 10px; }
+      .tag { font: 600 11px/1 ui-monospace, Menlo, Consolas, monospace; padding: 3px 6px; border-radius: 3px; white-space: nowrap; }
+      .pass { color: var(--pass); } .fail { color: var(--fail); } .pending { color: var(--pending); }
+      code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+      .num { font-variant-numeric: tabular-nums; font-family: ui-monospace, Menlo, Consolas, monospace; }
+      .note { color: var(--muted); font-size: 12.5px; max-width: 74ch; }
+      .phase { display: flex; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--border); }
+      .phase:last-child { border-bottom: 0; }
+      .phase-name { flex: 1; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Glass-Box Sampler — build progress</h1>
+      <p class="sub">
+        Updated at each milestone. Nothing here is claimed as passing without an evidence bundle
+        under <code>evidence/</code> to back it.
+      </p>
+
+      <h2>Phases</h2>
+      <div class="card">
+        <div class="phase"><span class="phase-name">A — Harness, self-verified</span><span class="tag pass">DONE</span></div>
+        <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pending">IN FLIGHT</span></div>
+        <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pending">NEXT</span></div>
+        <div class="phase"><span class="phase-name">D — Gauntlet waves (0 of 5 used)</span><span class="tag pending">—</span></div>
+        <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pending">—</span></div>
+      </div>
+
+      <h2>Machine gates</h2>
+      <table>
+        <thead><tr><th>Gate</th><th>Status</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td>Sampling math within 1e-6</td><td class="tag pass">PASS</td><td class="note">61 tests; worst disagreement with the 40-digit reference is 2.2e-16</td></tr>
+          <tr><td>Harness self-test</td><td class="tag pass">PASS</td><td class="note">Each of 5 defect mocks trips its own gate only</td></tr>
+          <tr><td>Zero console errors or warnings</td><td class="tag pending">NOT MEASURED</td><td class="note">Needs the app running</td></tr>
+          <tr><td>p95 frame time ≤ 16.7ms</td><td class="tag pending">NOT MEASURED</td><td class="note">Baseline machine capability confirmed: 6.2ms on the green mock</td></tr>
+          <tr><td>Lighthouse performance ≥ 90</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+          <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+          <tr><td>Replay determinism, byte-identical</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+          <tr><td>Usable at 375px and 1440px</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+          <tr><td>prefers-reduced-motion honoured</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Harness self-test baseline</h2>
+      <table>
+        <thead><tr><th>Mock</th><th>Console</th><th>Frames</th><th>Motion</th><th>Viewport</th><th>Determinism</th></tr></thead>
+        <tbody>
+          <tr><td>green</td><td>clean</td><td class="num">p95 6.2ms</td><td>ok</td><td>ok</td><td>ok</td></tr>
+          <tr><td>jank</td><td>clean</td><td class="num fail">p95 36.5ms</td><td>ok</td><td>ok</td><td>ok</td></tr>
+          <tr><td>noisy</td><td class="fail">NOISY</td><td class="num">pass</td><td>ok</td><td>ok</td><td>ok</td></tr>
+          <tr><td>nondet</td><td>clean</td><td class="num">pass</td><td>ok</td><td>ok</td><td class="fail">DRIFT</td></tr>
+          <tr><td>motion</td><td>clean</td><td class="num">pass</td><td class="fail">10 violations</td><td>ok</td><td>ok</td></tr>
+          <tr><td>overflow</td><td>clean</td><td class="num">pass</td><td>ok</td><td class="fail">OVERFLOW</td><td>ok</td></tr>
+        </tbody>
+      </table>
+      <p class="note" style="margin-top:10px">
+        The green mock doubles as the environment baseline. It animates ten bars with trivial
+        per-frame work, so if it cannot hold the budget then the machine is at fault and no verdict
+        on the application would mean anything.
+      </p>
+
+      <h2>Findings so far</h2>
+      <table>
+        <tbody>
+          <tr>
+            <td style="width:30%">Idle pages cannot be frame-measured</td>
+            <td class="note">
+              Chromium skips compositor frames when nothing changes. Measured: an idle page
+              delivered ~585ms of frames across a 2000ms window, and the percentiles of that
+              starved burst looked excellent. The probe now reports the span it covers and the
+              judge returns INSUFFICIENT_DATA rather than a green tick.
+            </td>
+          </tr>
+          <tr>
+            <td>Self-test must match the real configuration</td>
+            <td class="note">
+              Frame timing originally ran headless in the self-test while the real gate runs
+              headed. Validating a setup the real run never uses proves nothing.
+            </td>
+          </tr>
+          <tr>
+            <td>White on the accent fails in dark theme</td>
+            <td class="note">
+              Measured at 2.64:1, not assumed. The dark theme uses dark ink on the accent fill
+              instead. Worst text contrast across both themes is 5.27:1.
+            </td>
+          </tr>
+          <tr>
+            <td>Live mode ships untested</td>
+            <td class="note">
+              No OPENAI_API_KEY in this environment, so it cannot be smoke-tested. It is built,
+              unit-tested at the parser level, and kept behind the replay default. The README
+              says so plainly.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

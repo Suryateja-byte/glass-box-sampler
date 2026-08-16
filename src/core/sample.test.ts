@@ -51,7 +51,8 @@ describe('sampleIndex (inverse-CDF selection)', () => {
     const counts = [0, 0, 0];
     const draws = 100_000;
     for (let i = 0; i < draws; i += 1) {
-      counts[sampleIndex(probs, 3, (i + 0.5) / draws)] += 1;
+      const picked = sampleIndex(probs, 3, (i + 0.5) / draws);
+      counts[picked] = (counts[picked] ?? 0) + 1;
     }
     expect(counts[0]! / draws).toBeCloseTo(0.5, 3);
     expect(counts[1]! / draws).toBeCloseTo(0.3, 3);

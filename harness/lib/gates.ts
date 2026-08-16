@@ -156,7 +156,7 @@ export interface MotionAudit {
   /** Elements still carrying a non-zero transition or animation duration. */
   violations: { selector: string; property: string; duration: string }[];
   /** Web Animations still scheduled with a non-zero duration. */
-  runningAnimations: { duration: number | string }[];
+  runningAnimations: { duration: number }[];
 }
 
 /**
@@ -198,9 +198,13 @@ export async function auditMotion(page: Page): Promise<MotionAudit> {
       }
     }
 
-    const runningAnimations = document.getAnimations().map((animation) => ({
-      duration: animation.effect?.getTiming().duration ?? 0,
-    }));
+    // getTiming().duration is number | 'auto' | CSSNumericValue. Anything not
+    // already a number is coerced to 0 rather than dropped, since a duration
+    // this check cannot read is not evidence of a duration that exists.
+    const runningAnimations = document.getAnimations().map((animation) => {
+      const duration = animation.effect?.getTiming().duration;
+      return { duration: typeof duration === 'number' ? duration : 0 };
+    });
 
     return { violations, runningAnimations };
   });

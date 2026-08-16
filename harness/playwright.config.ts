@@ -29,7 +29,9 @@ export default defineConfig({
     },
     {
       name: 'headless',
-      testMatch: /(determinism|responsive|reduced-motion|capture)\.spec\.ts/,
+      // capture.spec.ts carries the responsive gate along with the screenshots,
+      // since both need the same states at the same two viewports.
+      testMatch: /(determinism|reduced-motion|capture)\.spec\.ts/,
     },
     {
       // Frame timing runs headed against the real compositor and real vsync.
