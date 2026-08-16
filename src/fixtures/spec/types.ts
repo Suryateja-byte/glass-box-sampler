@@ -15,16 +15,21 @@
  * What kind of token a step is, which is the only thing that decides how much
  * probability its head should carry.
  *
- *   func    determiners, prepositions, auxiliaries, conjunctions -- and, in the
- *           code fixture, identifier references that earlier context has
- *           already bound ("n" inside a body whose signature says `n`).
+ *   func    determiners, prepositions, auxiliaries, conjunctions.
  *   punct   commas, full stops, quotes.
  *   content nouns, verbs, adjectives: the choices that carry meaning, and the
  *           only ones with a cluster of real near-synonyms behind them.
+ *   bound   a content word or identifier the context has already decided --
+ *           "Mars" after "Champ de", "el" after " Eiff", `n` inside a body
+ *           whose signature says `n`. Peaked like a determiner despite being a
+ *           noun, which is exactly why factual recall reads as confident.
+ *   sub     a word-piece continuation: "el" after " Eiff", "house" after
+ *           " light". Peaked, and its rivals are other word-pieces rather than
+ *           words -- the detail a reader who knows BPE will look for first.
  *   syntax  code keywords, operators, brackets, newlines, indentation.
  *   ident   code identifiers and literal values: the genuinely free choices.
  */
-export type TokenCategory = 'func' | 'punct' | 'content' | 'syntax' | 'ident';
+export type TokenCategory = 'func' | 'punct' | 'content' | 'bound' | 'sub' | 'syntax' | 'ident';
 
 /**
  * Where a branch resumes once its bridge runs out.
@@ -161,15 +166,19 @@ export const DEFAULT_HEAD_BANDS: Record<TokenCategory, readonly [number, number]
   func: [0.7, 0.94],
   punct: [0.74, 0.965],
   content: [0.2, 0.55],
+  bound: [0.78, 0.94],
+  sub: [0.8, 0.95],
   syntax: [0.9, 0.978],
   ident: [0.2, 0.55],
 };
 
 /** Bits added to a region's target for each category, before the wiggle. */
 export const DEFAULT_ENTROPY_OFFSETS: Record<TokenCategory, number> = {
-  func: -0.22,
-  punct: -0.38,
-  content: 0.3,
-  syntax: -1.05,
+  func: -0.06,
+  punct: -0.33,
+  content: 0.65,
+  bound: -0.06,
+  sub: -0.1,
+  syntax: -1.13,
   ident: 1.05,
 };

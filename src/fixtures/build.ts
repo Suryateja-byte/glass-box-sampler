@@ -56,13 +56,20 @@ import {
 const EOS_ID = 'end';
 
 /**
- * Zipf-ish tail at flatness 0: logprob_i = logprob_1 - a*ln(i) - b*i + jitter.
- * The two decay terms do different jobs -- the log term is the heavy Zipf body,
+ * The tail law: logprob_i = logprob_1 - a*ln(i) - b*i + jitter, for i >= 2.
+ *
+ * Two decay terms, doing different jobs: the log term is the heavy Zipf body,
  * the linear one makes the last few candidates fall away faster than a pure
- * power law would, which is what real top-k tails do.
+ * power law would, which is what real top-k tails do. Flatness interpolates
+ * between the steep pair and the shallow one. The shallow end is deliberately
+ * not (0, 0) -- a genuinely uniform tail is not a thing that happens, and it
+ * would make the flat fixtures look synthetic in exactly the way this file is
+ * trying to avoid.
  */
-const TAIL_LOG_DECAY = 2.45;
-const TAIL_LINEAR_DECAY = 0.6;
+const TAIL_LOG_STEEP = 2.8;
+const TAIL_LOG_SHALLOW = 0.35;
+const TAIL_LINEAR_STEEP = 0.7;
+const TAIL_LINEAR_SHALLOW = 0.06;
 
 /** Seeded wobble applied to every tail logprob, in nats. */
 const TAIL_JITTER_NATS = 0.16;
@@ -147,8 +154,8 @@ function entropyBits(probs: readonly number[]): number {
  * would leave the realised entropy off target by more than the tolerance.
  */
 function shape(head: number, flatness: number, jitter: readonly number[]): number[] {
-  const a = TAIL_LOG_DECAY * (1 - flatness);
-  const b = TAIL_LINEAR_DECAY * (1 - flatness);
+  const a = TAIL_LOG_STEEP + (TAIL_LOG_SHALLOW - TAIL_LOG_STEEP) * flatness;
+  const b = TAIL_LINEAR_STEEP + (TAIL_LINEAR_SHALLOW - TAIL_LINEAR_STEEP) * flatness;
 
   const weights: number[] = [];
   let weightSum = 0;
@@ -213,6 +220,8 @@ interface Solved {
   readonly head: number;
   readonly sum: number;
   readonly category: TokenCategory;
+  /** True when the spec asked for an entropy this category's head cannot reach. */
+  readonly clamped: boolean;
 }
 
 function round(value: number, decimals: number): number {
@@ -301,6 +310,7 @@ function solveNode(
       head: realisedHead,
       sum,
       category,
+      clamped: Math.abs(target - desired) > 1e-4,
     };
   }
 
@@ -333,7 +343,7 @@ const PROSE_FUNCTION_WORDS = new Set([
   'there', 'these', 'they', 'this', 'those', 'though', 'three', 'through', 'to', 'too',
   'toward', 'towards', 'two', 'under', 'until', 'up', 'upon', 'us', 'very', 'was', 'we',
   'were', 'what', 'when', 'where', 'whether', 'which', 'while', 'who', 'whose', 'why',
-  'will', 'with', 'within', 'without', 'would', 'yet', 'you', 'your',
+  'will', 'with', 'within', 'without', 'would', 'yet', 'you', 'your', "'s", "'t", "'re",
 ]);
 
 /** Python keywords and builtins: the tokens a code model is nearly sure about. */
@@ -354,6 +364,9 @@ function classify(text: string, kind: 'prose' | 'code'): TokenCategory {
     return 'ident';
   }
   if (bare === '' || !/[A-Za-z0-9]/.test(bare)) return 'punct';
+  // Prose word tokens carry their leading space. One that does not is a
+  // word-piece glued to what came before, and its rivals are other pieces.
+  if (/^[A-Za-z0-9]/.test(text)) return 'sub';
   const word = bare.replace(/[^A-Za-z']/g, '').toLowerCase();
   return PROSE_FUNCTION_WORDS.has(word) ? 'func' : 'content';
 }
@@ -383,6 +396,8 @@ export interface BuildStats {
   sumLo: number;
   sumHi: number;
   clusterSum: number;
+  clusterWithin: number;
+  clamped: number;
   readonly byCategory: Map<TokenCategory, CategoryStats>;
 }
 
@@ -434,10 +449,13 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
     sumLo: Infinity,
     sumHi: -Infinity,
     clusterSum: 0,
+    clusterWithin: 0,
+    clamped: 0,
     byCategory: new Map(),
   };
 
   const nodes = new Map<string, FixtureNode>();
+  const bridgeCache = new Map<string, string>();
   const placeholder: FixtureNode = { c: [] };
 
   const spineId = (index: number): string => (index >= steps.length ? EOS_ID : `s${index}`);
@@ -499,11 +517,19 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
     return drawn;
   };
 
-  /** Records how tight the near-synonym cluster behind the head is, in nats. */
+  /**
+   * How tight the near-synonym cluster behind the head is: the rank-1 to rank-4
+   * spread in nats, and how many candidates sit within 1.5 nats of the head.
+   */
   const noteCluster = (solved: Solved): void => {
     const first = solved.logprobs[0] ?? 0;
-    const fourth = solved.logprobs[3] ?? 0;
-    stats.clusterSum += first - fourth;
+    stats.clusterSum += first - (solved.logprobs[3] ?? 0);
+    let within = 0;
+    for (const logprob of solved.logprobs) {
+      if (first - logprob <= 1.5) within += 1;
+    }
+    stats.clusterWithin += within;
+    if (solved.clamped) stats.clamped += 1;
   };
 
   const finish = (id: string, solved: Solved, texts: readonly string[], nexts: readonly string[]): void => {
@@ -536,8 +562,17 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
     region: RegionSpec,
     idBase: string,
   ): string => {
+    // Two branches that say the same words on the way to the same place are the
+    // same branch. Sharing matters most for the one-token escape a topped-up
+    // distractor takes, which every content step in a region would otherwise
+    // duplicate; the fixture stays a lattice either way.
+    const cacheKey = `${region.label} ${exit} ${tokens.join(' ')}`;
+    const cached = bridgeCache.get(cacheKey);
+    if (cached !== undefined) return cached;
+
     stats.bridges += 1;
     const ids = tokens.map((_, j) => `${idBase}_${j}`);
+    bridgeCache.set(cacheKey, ids[0] ?? exit);
     for (let j = 0; j < tokens.length; j += 1) {
       const id = ids[j] ?? '';
       nodes.set(id, placeholder);
@@ -577,7 +612,10 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
     const alts: AltSpec[] = [...step.alts];
     const wanted = K - 1 - alts.length;
     if (wanted > 0) {
-      const escapes = step.cat === 'content' || step.cat === 'ident';
+      // A swapped noun can derail the sentence it lands in, so a topped-up one
+      // takes the region's escape out of it. A swapped determiner or bracket
+      // cannot, so it stays a drop-in.
+      const escapes = step.cat === 'content' || step.cat === 'bound' || step.cat === 'ident';
       for (const text of drawFromPool(poolFor(region, step.cat, id), used, wanted, id)) {
         alts.push(
           escapes
@@ -733,8 +771,10 @@ function report(stats: BuildStats, bytes: number): string[] {
       `(${stats.bridgeNodes} in ${stats.bridges} bridges), ${stats.candidates} candidates, ` +
       `${(bytes / 1024).toFixed(1)} KiB`,
     `    entropy ${stats.entropyLo.toFixed(2)}-${stats.entropyHi.toFixed(2)} bits ` +
-      `(mean ${mean.toFixed(2)}), top-${K} mass ${stats.sumLo.toFixed(3)}-${stats.sumHi.toFixed(3)}, ` +
-      `mean rank1-rank4 spread ${(stats.clusterSum / (stats.nodes - 1)).toFixed(2)} nats`,
+      `(mean ${mean.toFixed(2)}), top-${K} mass ${stats.sumLo.toFixed(3)}-${stats.sumHi.toFixed(3)}`,
+    `    rank1-rank4 spread ${(stats.clusterSum / (stats.nodes - 1)).toFixed(2)} nats mean, ` +
+      `${(stats.clusterWithin / (stats.nodes - 1)).toFixed(1)} candidates within 1.5 nats of the head, ` +
+      `${stats.clamped} target(s) clamped`,
   ];
   for (const [category, entry] of [...stats.byCategory].sort((a, b) => a[0].localeCompare(b[0]))) {
     lines.push(

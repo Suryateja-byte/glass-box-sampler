@@ -151,13 +151,15 @@ export function mountBars(labels: {
       }
 
       const permille = Math.round(probability * 1000);
-      if (permille !== row.lastPermille) {
+      const percentChanged = permille !== row.lastPermille;
+      if (percentChanged) {
         row.percent.textContent = formatPercent(probability);
         row.lastPermille = permille;
       }
 
       const label = displayToken(candidate.text);
-      if (label !== row.lastToken) {
+      const tokenChanged = label !== row.lastToken;
+      if (tokenChanged) {
         row.token.textContent = label;
         row.lastToken = label;
       }
@@ -165,7 +167,8 @@ export function mountBars(labels: {
       const state =
         `${inNucleus ? 'in' : 'out'}${rank === chosenIndex ? '-chosen' : ''}` +
         `${rank === display.nucleusSize - 1 && display.nucleusSize < count ? '-edge' : ''}`;
-      if (state !== row.lastState) {
+      const stateChanged = state !== row.lastState;
+      if (stateChanged) {
         row.root.className =
           'bar-row' +
           (inNucleus ? '' : ' is-excluded') +
@@ -179,11 +182,18 @@ export function mountBars(labels: {
 
       // The accessible name carries what colour and length convey visually,
       // including exclusion, which is otherwise a contrast-only signal.
-      row.button.setAttribute(
-        'aria-label',
-        labels.rowDescription(candidate.text, formatPercent(probability), rank + 1) +
-          (inNucleus ? '' : labels.excludedSuffix),
-      );
+      //
+      // Rewritten only when something in it actually changed. Rebuilding this
+      // string and calling setAttribute for ten rows on every frame of a drag
+      // is pure waste, and it is waste on the one path the frame-time gate
+      // measures.
+      if (percentChanged || tokenChanged || stateChanged) {
+        row.button.setAttribute(
+          'aria-label',
+          labels.rowDescription(candidate.text, formatPercent(probability), rank + 1) +
+            (inNucleus ? '' : labels.excludedSuffix),
+        );
+      }
     }
   };
 

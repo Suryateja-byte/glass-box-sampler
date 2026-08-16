@@ -94,10 +94,22 @@ export class ReplaySource implements SamplerSource {
       }
 
       nodeId = edge[2];
-      this.timer = setTimeout(tick, this.cadenceMs);
+      this.schedule(tick);
     };
 
-    this.timer = setTimeout(tick, this.cadenceMs);
+    this.schedule(tick);
+  }
+
+  /**
+   * A cadence of zero means "as fast as possible", used by tests and by the
+   * capture hooks that jump to a given step. It still yields between steps: the
+   * engine settles status and resolves waiters between commits, and running the
+   * whole generation inside the start() call would complete it before the
+   * caller had a chance to await anything.
+   */
+  private schedule(tick: () => void): void {
+    if (this.cadenceMs <= 0) queueMicrotask(tick);
+    else this.timer = setTimeout(tick, this.cadenceMs);
   }
 
   stop(): void {

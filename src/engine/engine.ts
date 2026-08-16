@@ -273,6 +273,14 @@ export class Engine {
       return Promise.resolve();
     }
     if (this.state.status !== 'streaming') this.start(source);
+    // Re-read after start(): a zero-cadence source can reach the target inside
+    // that call, and a waiter registered afterwards would never be settled. The
+    // annotation is what tells the compiler the status may have moved on.
+    const afterStart = this.currentStatus();
+    if (this.chainLength() >= target || afterStart === 'done') {
+      this.pause();
+      return Promise.resolve();
+    }
     return new Promise<void>((resolve) => {
       this.waiters.push({ target, resolve });
     });
@@ -281,6 +289,8 @@ export class Engine {
   runToEnd(source: SamplerSource): Promise<void> {
     if (this.state.status === 'done') return Promise.resolve();
     if (this.state.status !== 'streaming') this.start(source);
+    const afterStart = this.currentStatus();
+    if (afterStart === 'done') return Promise.resolve();
     return new Promise<void>((resolve) => {
       this.waiters.push({ target: 'end', resolve });
     });
@@ -358,6 +368,16 @@ export class Engine {
     const inNucleus = display.nucleusProbs[index] ?? 0;
     if (inNucleus > 0) return inNucleus;
     return display.probs[index] ?? 0;
+  }
+
+  /**
+   * Reads the status through a call so the compiler drops any narrowing it was
+   * holding. Callers below need the value AFTER start() may have changed it,
+   * and control-flow analysis assumes a property it has narrowed stays put
+   * across a method call.
+   */
+  private currentStatus(): GenerationStatus {
+    return this.state.status;
   }
 
   private setStatus(status: GenerationStatus): void {
