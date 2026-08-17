@@ -7,27 +7,33 @@ Live status of the build. Open `progress.html` for the same thing in a browser.
 | Phase | State |
 |---|---|
 | A — Harness, self-verified | **Done** |
-| B — Core pieces + coupled cluster | In flight |
-| C — Walking skeleton + wave-0 evidence | Not started |
-| D — Gauntlet waves (max 5) | Not started |
+| B — Core pieces + coupled cluster | **Done** |
+| C — Walking skeleton + wave-0 evidence | **Done** |
+| D — Gauntlet waves (max 5) | In flight — wave 0 judged |
 | E — Cold-start acceptance | Not started |
 
 ## Gate status
 
-Measured by `npm run harness`. Nothing below is a claim until a bundle in
-`evidence/` backs it.
+All measured by `npm run harness` against `evidence/wave-0/`, on commit
+`31586378`, clean tree. Nothing here is a claim without a bundle behind it.
 
-| Gate | Status | Evidence |
+| Gate | Status | Measured |
 |---|---|---|
-| Sampling math within 1e-6 | **PASS** | 61 tests, `npx vitest run src/core` |
-| Harness self-test | **PASS** | `evidence/selftest/selftest.json` |
-| Zero console errors/warnings | not yet measured | |
-| p95 frame time ≤ 16.7ms | not yet measured | |
-| Lighthouse performance ≥ 90 | not yet measured | |
-| Lighthouse accessibility ≥ 90 | not yet measured | |
-| Replay determinism (byte-identical) | not yet measured | |
-| Usable at 375px and 1440px | not yet measured | |
-| prefers-reduced-motion honoured | not yet measured | |
+| Sampling math within 1e-6 | **PASS** | 157 tests; worst disagreement 2.2e-16 |
+| Harness self-test | **PASS** | 5 defect mocks, each tripping only its own gate |
+| Zero console errors/warnings | **PASS** | 0 violations across every page the harness opened |
+| p95 frame time ≤ 16.7ms | **PASS** | median p95 **6.20ms**, spread 0.00ms, 0 long frames |
+| Lighthouse performance ≥ 90 | **PASS** | **100** (median of 3, simulated throttling) |
+| Lighthouse accessibility ≥ 90 | **PASS** | **100** (median of 3) |
+| Replay determinism (byte-identical) | **PASS** | 73,571 bytes identical; rendered text also identical |
+| Usable at 375px and 1440px | **PASS** | 6 states each, no horizontal overflow |
+| prefers-reduced-motion honoured | **PASS** | self-report, computed styles and animation timeline all clean |
+
+The frame number deserves a caveat: the display here runs at ~164Hz (observed
+interval 6.1ms), so 6.20ms is essentially "every frame on time" rather than
+"comfortably inside a 16.7ms budget". It is measured headed against real vsync
+with a real mouse drag during streaming, and it is recorded honestly rather than
+presented as more headroom than it is.
 
 ## Phase A — done
 
@@ -84,7 +90,39 @@ without max-subtraction. Case P5 is a self-consistency identity: truncating
 exactly, because dropping a token and renormalising *is* softmax over the
 survivors — an error in either function breaks it.
 
-## Phase B — in flight
+## Phase C — walking skeleton, done
+
+Every capability wired end to end in replay mode, then measured. All gates pass
+on the skeleton, which means the waves that follow are about the quality bar
+rather than about correctness.
+
+### Defects found by driving the real interface
+
+None of these were visible from reading the code; all three came from operating
+the app with real input events and reading back the DOM.
+
+- **Percentage labels went stale.** The write cache keyed on the probability
+  rounded to three decimals — coarser than the text it guarded. Two different
+  probabilities that round alike (0.0003 and 0.00001 both round to zero) skipped
+  the write, leaving the previous step's figure on screen next to a correct bar.
+  Caught by dumping all ten rows at three temperatures and noticing the
+  percentages were not monotonically decreasing. Now caches the rendered string.
+- **First paint depended on requestAnimationFrame.** A browser that is not
+  compositing never runs one, so the app rendered nothing at all in a hidden
+  pane while the engine streamed happily underneath. The initial render now
+  flushes synchronously; everything after still batches through the scheduler.
+- **Ten unnamed buttons in the accessibility tree** before anything was sampled.
+  Empty rows are now hidden from it.
+
+### Harness defects found the same way
+
+- `determinism.spec.ts` wrote into a directory it never created.
+- A harness run overlapping another agent's file writes produced a spurious
+  `samplingMath` failure. The manifest's dirty-tree flag catches uncommitted
+  changes but not concurrent ones — worth remembering before trusting any bundle
+  produced while something else is writing.
+
+## Phase B — done
 
 **Coupled cluster (sequential, single owner):** `engine/types.ts`,
 `engine/engine.ts`, `engine/events.ts`, `sources/replay.ts`, `ui/raf.ts`,

@@ -76,9 +76,9 @@
       <h2>Phases</h2>
       <div class="card">
         <div class="phase"><span class="phase-name">A — Harness, self-verified</span><span class="tag pass">DONE</span></div>
-        <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pending">IN FLIGHT</span></div>
-        <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pending">NEXT</span></div>
-        <div class="phase"><span class="phase-name">D — Gauntlet waves (0 of 5 used)</span><span class="tag pending">—</span></div>
+        <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pass">DONE</span></div>
+        <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pass">DONE</span></div>
+        <div class="phase"><span class="phase-name">D — Gauntlet waves (0 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
         <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pending">—</span></div>
       </div>
 
@@ -86,15 +86,15 @@
       <table>
         <thead><tr><th>Gate</th><th>Status</th><th>Evidence</th></tr></thead>
         <tbody>
-          <tr><td>Sampling math within 1e-6</td><td class="tag pass">PASS</td><td class="note">61 tests; worst disagreement with the 40-digit reference is 2.2e-16</td></tr>
+          <tr><td>Sampling math within 1e-6</td><td class="tag pass">PASS</td><td class="note">157 tests; worst disagreement with the 40-digit reference is 2.2e-16</td></tr>
           <tr><td>Harness self-test</td><td class="tag pass">PASS</td><td class="note">Each of 5 defect mocks trips its own gate only</td></tr>
-          <tr><td>Zero console errors or warnings</td><td class="tag pending">NOT MEASURED</td><td class="note">Needs the app running</td></tr>
-          <tr><td>p95 frame time ≤ 16.7ms</td><td class="tag pending">NOT MEASURED</td><td class="note">Baseline machine capability confirmed: 6.2ms on the green mock</td></tr>
-          <tr><td>Lighthouse performance ≥ 90</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
-          <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
-          <tr><td>Replay determinism, byte-identical</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
-          <tr><td>Usable at 375px and 1440px</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
-          <tr><td>prefers-reduced-motion honoured</td><td class="tag pending">NOT MEASURED</td><td></td></tr>
+          <tr><td>Zero console errors or warnings</td><td class="tag pass">PASS</td><td class="note">0 violations across every page the harness opened</td></tr>
+          <tr><td>p95 frame time ≤ 16.7ms</td><td class="tag pass">PASS</td><td class="note">median p95 6.20ms, spread 0.00ms, zero long frames. The display runs ~164Hz, so this is "every frame on time" rather than headroom inside 16.7ms</td></tr>
+          <tr><td>Lighthouse performance ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs, default simulated throttling</td></tr>
+          <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs</td></tr>
+          <tr><td>Replay determinism, byte-identical</td><td class="tag pass">PASS</td><td class="note">73,571 bytes identical across two fresh contexts; the rendered transcript matches too</td></tr>
+          <tr><td>Usable at 375px and 1440px</td><td class="tag pass">PASS</td><td class="note">6 states at each width, no horizontal overflow</td></tr>
+          <tr><td>prefers-reduced-motion honoured</td><td class="tag pass">PASS</td><td class="note">self-report, computed styles and the live animation timeline all clean</td></tr>
         </tbody>
       </table>
 

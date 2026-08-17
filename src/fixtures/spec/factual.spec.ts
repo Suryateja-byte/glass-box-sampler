@@ -138,13 +138,20 @@ export const FACTUAL_SPEC: FixtureSpec = {
   ],
   steps: [
     // ---------------------------------------------------- where it stands
+    // The entry node, so all nine rivals are authored rather than drawn from
+    // the region pool: this is the distribution everyone reads first, and a
+    // filler noun that needs an article it will not get ("located in quarter")
+    // would be the first thing to give the fixture away.
     s(' Paris', 'bound', [
       at(1, ' Par', 'is'),
       br(' the', ' heart', ' of', ' Paris', '.'),
       br(' central', ' Paris', '.'),
       br(' France', '.'),
-      br(' Europe', '.'),
       br(' downtown', ' Paris', '.'),
+      br(' Europe', '.'),
+      br(' western', ' Paris', '.'),
+      br(' northern', ' France', '.'),
+      br(' a', ' park', ' by', ' the', ' Seine', '.'),
     ]),
     s(',', 'punct', [
       br('.', ' It', ' stands', ' in', ' France', '.'),

@@ -254,12 +254,20 @@ function clamp(value: number, lo: number, hi: number): number {
 }
 
 /**
- * Picks a head probability and a tail shape for one node.
+ * Solves one node: a tail shape, a head probability, and the top-k mass.
  *
- * The head band belongs to the token's category and is honoured absolutely: a
- * determiner never ends up looking like an open choice. The entropy target
- * bends instead, but only inside the fixture's declared band -- if it would have
- * to leave that band to fit the head, the spec is wrong and the build stops.
+ * Three things are being reconciled, and they cannot all be free. The entropy
+ * target comes from the region and the token's category. The head band also
+ * comes from the category, and is honoured absolutely -- a determiner never
+ * ends up looking like an open choice. The tail slope is what is left, and it
+ * is the one thing a reader can eyeball, so it gets the first say: the node
+ * takes the shape closest to the one it drew, among those whose solved head
+ * lands inside the band.
+ *
+ * When even the whole shape family cannot reconcile them, the entropy target is
+ * the thing that bends -- but only within the fixture's declared band. If it
+ * would have to leave that band, the spec itself is wrong and the build stops
+ * rather than quietly shipping a distribution nobody asked for.
  */
 function solveNode(
   spec: FixtureSpec,
@@ -633,8 +641,7 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
       throw new Error(`${spec.id}/${id}: ${step.alts.length} alternatives, at most ${K - 1} fit.`);
     }
 
-    // Authored alternatives first, then pool fillers for whatever is left. A
-    // filler that could derail the sentence takes the region's escape out of it.
+    // Authored alternatives first, then pool fillers for whatever is left.
     const alts: AltSpec[] = [...step.alts];
     const wanted = K - 1 - alts.length;
     if (wanted > 0) {
