@@ -78,7 +78,7 @@
         <div class="phase"><span class="phase-name">A — Harness, self-verified</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pass">DONE</span></div>
-        <div class="phase"><span class="phase-name">D — Gauntlet waves (0 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
+        <div class="phase"><span class="phase-name">D — Gauntlet waves (2 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
         <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pending">—</span></div>
       </div>
 
@@ -119,6 +119,34 @@
       <h2>Findings so far</h2>
       <table>
         <tbody>
+
+          <tr>
+            <td>Wave 0 FAIL: the panel did not reconcile</td>
+            <td class="note">
+              Bars summed to 144% once top-p bit, because survivors were drawn renormalised while
+              discarded candidates kept their pre-cut length. The tail was counted twice, and
+              CHOSEN P was frozen at 95.8% beside a committed-token bar drawn at 55.5%. Fixed with
+              two explicit bar layers, coverage stated once, and a live chosen-p.
+            </td>
+          </tr>
+          <tr>
+            <td>Wave 1 FAIL: the rule was never drawn</td>
+            <td class="note">
+              Top-p is a rule about a running total and no running total appeared anywhere, so the
+              hairline between two rows was an assertion the reader had to verify by mental
+              arithmetic. There is now a &Sigma;p column on the same basis as the p column beside it,
+              and the caption names the rank where it crosses the threshold.
+            </td>
+          </tr>
+          <tr>
+            <td>The surprisal tint encoded nothing</td>
+            <td class="note">
+              Measured, not assumed: 63 of 68 tokens in the default fixture fell in the first
+              bucket, which is transparent with a zero-width underline. Thresholds were taken from
+              the range surprisal can span rather than the range it occupies. Rebased on
+              probability landmarks; occupancy went from 93/0/1/6/0 to 69/24/0/0/7.
+            </td>
+          </tr>
           <tr>
             <td style="width:30%">Idle pages cannot be frame-measured</td>
             <td class="note">

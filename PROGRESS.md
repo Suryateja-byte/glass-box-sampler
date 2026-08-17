@@ -197,6 +197,58 @@ tracks the leader bar (95.8% → 55.5% → 100.0%), and no gate regressed — fr
 p95 unchanged at 6.20ms despite a second animated layer per row, Lighthouse
 still 100/100, determinism still byte-identical (`evidence/wave-1/`).
 
+## Wave 2 — the rule was never drawn, only its result
+
+**Verdict on wave 1: FAIL.** A second fresh critic re-derived the mathematics
+independently — temperature rescaling, entropy, nucleus selection,
+renormalisation — and found every figure exact. Then it failed the artifact on a
+sharper point: **top-p is a rule about a running total, and no running total
+appeared anywhere.** The reader got a column of percentages and a 1px hairline,
+and had to do the addition mentally to learn why the cut fell where it did.
+
+**Fix.** Three numeric columns on two clearly named bases:
+
+```
+token       p       Σp      after
+·never    34.4%   34.4%    48.4%
+·not      21.8%   56.2%    30.6%
+·rarely   14.9%   71.2%    21.0%   <- cut lands here
+·seldom    9.33%  80.5%       —
+```
+
+`p` and `Σp` both describe the distribution **before** the cut, so Σp is
+literally the running sum of the column beside it and can be checked by eye.
+`after` is the only post-renormalisation column, and it is what the solid bar
+draws. The caption states the rule with its own numbers in it.
+
+A first attempt at this had Σp climbing on the pre-cut basis next to a `p`
+column on the post-cut basis — the same quiet mixing of scales wave 1 was failed
+for. Splitting `after` into its own column is what fixed it.
+
+**The surprisal tint was measured and found to encode nothing.** Thresholds of
+1/2.5/5/8 bits were drawn from the range surprisal *can* span rather than the
+range it occupies. A sampled token is usually a likely one:
+
+| fixture | old buckets | new buckets |
+|---|---|---|
+| factual | **63**/0/1/4/0 | 47/16/0/0/5 |
+| creative | 4/29/16/5/0 | 0/0/11/32/11 |
+| code | 42/3/1/1/0 | 39/0/4/2/2 |
+
+93% of the default text was in the transparent, zero-underline bucket — the
+encoding was absent for the text it was supposedly colouring. Thresholds are now
+probability landmarks (0.15/0.5/1.5/3.5 bits = p of 0.90/0.71/0.35/0.09). The
+five underline weights were also two pairs of duplicates, collapsing the
+non-colour channel to three levels; now distinct.
+
+**Also:** the explanations were set in the smallest size and lightest grey in the
+system while the readouts they explain were near-black — hierarchy inverted
+against importance. And six columns at 375px squeezed the bar track to ~30px, so
+below 720px the track wraps onto its own row: **309px instead of 30px**.
+
+No gate regressed: frame p95 unchanged at 6.20ms across all three waves,
+Lighthouse 100/100, determinism byte-identical (`evidence/wave-2/`).
+
 ## Failed approaches (kept so they are not retried)
 
 - **Idle-page frame measurement** — abandoned. Not a tuning problem: an idle
