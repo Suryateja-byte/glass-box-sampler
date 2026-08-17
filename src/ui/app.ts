@@ -11,7 +11,7 @@ import { installHooks } from './metrics';
 import { Dirty, FrameScheduler } from './raf';
 import { mountSliders } from './sliders';
 import { mountStats } from './stats';
-import { mountStream } from './stream';
+import { mountStream, mountSurprisalLegend } from './stream';
 import { mountTrail } from './trail';
 
 /**
@@ -68,7 +68,11 @@ export function createApp(options: AppOptions): void {
     rowDescription: (token, percent, rank) =>
       `${COPY.a11y.forkButton(token)}. Rank ${rank}, ${percent}`,
     excludedSuffix: ', excluded by top-p',
-    wasPrefix: 'was ',
+    droppedMark: '—',
+    columnToken: 'token',
+    columnProbability: 'p',
+    columnCumulative: 'Σp',
+    columnAfter: 'after',
   });
 
   const stream = mountStream({
@@ -214,7 +218,18 @@ export function createApp(options: AppOptions): void {
   layout.append(
     panel(COPY.sections.controls, null, controls.element, sliders.element),
     panel(COPY.sections.candidates, COPY.candidates.explain(K), bars.element, tailCaption, stats.element),
-    panel(COPY.sections.completion, COPY.fork.hint, trail.element, stream.element),
+    panel(
+      COPY.sections.completion,
+      COPY.fork.hint,
+      trail.element,
+      stream.element,
+      mountSurprisalLegend({
+        title: COPY.surprisal.label,
+        low: COPY.surprisal.legendLow,
+        high: COPY.surprisal.legendHigh,
+        encoding: COPY.surprisal.encoding,
+      }),
+    ),
   );
 
   root.append(header, layout, liveRegion);
@@ -233,10 +248,25 @@ export function createApp(options: AppOptions): void {
     // When top-p has cut the list there are two normalisations on screen, so
     // the caption names them. Otherwise the ghosts sit exactly under the fills
     // and there is nothing extra to explain.
-    tailCaption.textContent =
-      display.nucleusSize < display.count
-        ? `${COPY.candidates.nucleusExplain} ${COPY.candidates.tailExplain(record.distribution.tailMass)}`
-        : COPY.candidates.tailExplain(record.distribution.tailMass);
+    // When a cut is in force, say in words exactly what the Σp column shows:
+    // which rank first reached the threshold, and therefore why the line is
+    // where it is. The reader should never have to do the addition themselves.
+    const settings = engine.getState().settings;
+    if (display.nucleusSize < display.count) {
+      let reached = 0;
+      for (let i = 0; i < display.nucleusSize; i += 1) reached += display.probs[i] ?? 0;
+      tailCaption.textContent =
+        COPY.candidates.cutExplain(
+          settings.topP,
+          display.nucleusSize,
+          Math.min(1, reached),
+          display.count,
+        ) +
+        ' ' +
+        COPY.candidates.tailExplain(record.distribution.tailMass);
+    } else {
+      tailCaption.textContent = COPY.candidates.tailExplain(record.distribution.tailMass);
+    }
   });
 
   scheduler.register(Dirty.Stats, () => {

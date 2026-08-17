@@ -38,7 +38,11 @@ interface Row {
   readonly ghost: HTMLSpanElement;
   readonly fill: HTMLSpanElement;
   readonly percent: HTMLSpanElement;
+  readonly cumulative: HTMLSpanElement;
+  readonly after: HTMLSpanElement;
   lastGhost: number;
+  lastCumulative: string;
+  lastAfter: string;
   // Last written values, so an unchanged row costs a comparison instead of a
   // DOM write. Text writes are the expensive part of this render.
   //
@@ -66,13 +70,37 @@ export function mountBars(labels: {
   regionLabel: string;
   rowDescription: (token: string, percent: string, rank: number) => string;
   excludedSuffix: string;
-  /** Marks a discarded candidate's percentage as a former value. */
-  wasPrefix: string;
+  /** Shown in the `after` column for a candidate top-p discarded. */
+  droppedMark: string;
+  columnToken: string;
+  columnProbability: string;
+  columnCumulative: string;
+  columnAfter: string;
 }): BarsHandle {
   const element = document.createElement('ol');
   element.className = 'bars';
   element.dataset['testid'] = 'bars';
   element.setAttribute('aria-label', labels.regionLabel);
+
+  // A header, because an unlabelled column of climbing percentages is a puzzle.
+  // Naming it as a running total is what makes the top-p rule legible.
+  const header = document.createElement('li');
+  header.className = 'bar-row bar-header';
+  header.setAttribute('aria-hidden', 'true');
+  for (const [className, text] of [
+    ['bar-rank', ''],
+    ['bar-token', labels.columnToken],
+    ['bar-track', ''],
+    ['bar-percent', labels.columnProbability],
+    ['bar-cumulative', labels.columnCumulative],
+    ['bar-after', labels.columnAfter],
+  ] as const) {
+    const cell = document.createElement('span');
+    cell.className = className;
+    cell.textContent = text;
+    header.append(cell);
+  }
+  element.append(header);
 
   const rows: Row[] = [];
   let forkHandler: ((rank: number) => void) | null = null;
@@ -113,7 +141,22 @@ export function mountBars(labels: {
     const percent = document.createElement('span');
     percent.className = 'bar-percent';
 
-    button.append(rankLabel, token, track, percent);
+    // The running total, which is the whole reason the top-p cut lands where it
+    // does. Without it the hairline between two rows is an assertion: the
+    // reader has to add the column up themselves to find out why rank 4 made it
+    // and rank 5 did not. With it, the rule reads straight off the screen.
+    const cumulative = document.createElement('span');
+    cumulative.className = 'bar-cumulative';
+
+    // Three numeric columns on one stated basis: p and Σp both describe the
+    // distribution BEFORE the cut, so Σp is literally the running sum of the
+    // column beside it and the reader can check it. `after` is the only column
+    // showing post-renormalisation values, and it is what the solid bar draws.
+    // Mixing bases across adjacent columns is how a panel starts lying quietly.
+    const after = document.createElement('span');
+    after.className = 'bar-after';
+
+    button.append(rankLabel, token, track, percent, cumulative, after);
     root.append(button);
     element.append(root);
 
@@ -126,9 +169,13 @@ export function mountBars(labels: {
       ghost,
       fill,
       percent,
+      cumulative,
+      after,
       lastScale: -1,
       lastGhost: -1,
       lastPercent: '',
+      lastCumulative: '',
+      lastAfter: '',
       lastToken: '',
       lastState: '',
     });
@@ -136,6 +183,9 @@ export function mountBars(labels: {
 
   const update: BarsHandle['update'] = (distribution, display, chosenIndex) => {
     const count = display?.count ?? 0;
+    // Accumulated over the pre-cut distribution, because that is the quantity
+    // top-p actually thresholds against.
+    let runningTotal = 0;
 
     for (let rank = 0; rank < K; rank += 1) {
       const row = rows[rank]!;
@@ -152,6 +202,10 @@ export function mountBars(labels: {
           row.lastState = 'empty';
           row.lastToken = '';
           row.lastPercent = '';
+          row.cumulative.textContent = '';
+          row.lastCumulative = '';
+          row.after.textContent = '';
+          row.lastAfter = '';
         }
         if (row.lastScale !== 0) {
           row.fill.style.transform = 'scaleX(0)';
@@ -184,17 +238,24 @@ export function mountBars(labels: {
         row.lastScale = scale;
       }
 
-      // A survivor's label is its current, renormalised probability. A
-      // discarded candidate's is prefixed "was", because its number is now
-      // historical: top-p gave it zero.
-      //
-      // The prefix is doing real work. Struck-through alone still leaves ten
-      // percentages in a column, and a reader who adds them up gets 144% and
-      // rightly stops trusting the panel. "was 3.1%" cannot be summed into a
-      // total by mistake, so the live figures reconcile to 100% on their own.
-      const percentText = inNucleus
-        ? formatPercent(afterCut)
-        : `${labels.wasPrefix}${formatPercent(beforeCut)}`;
+      // p: always the pre-cut probability, on the same basis as Σp beside it.
+      const percentText = formatPercent(beforeCut);
+
+      runningTotal += beforeCut;
+      const cumulativeText = formatPercent(Math.min(1, runningTotal));
+      if (cumulativeText !== row.lastCumulative) {
+        row.cumulative.textContent = cumulativeText;
+        row.lastCumulative = cumulativeText;
+      }
+
+      // after: the renormalised probability, which is what the solid bar draws.
+      // A discarded candidate has none, so it gets an em dash rather than a
+      // number that could be mistaken for a share of anything.
+      const afterText = inNucleus ? formatPercent(afterCut) : labels.droppedMark;
+      if (afterText !== row.lastAfter) {
+        row.after.textContent = afterText;
+        row.lastAfter = afterText;
+      }
       const percentChanged = percentText !== row.lastPercent;
       if (percentChanged) {
         row.percent.textContent = percentText;

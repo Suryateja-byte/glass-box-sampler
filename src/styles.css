@@ -277,11 +277,15 @@ body {
   accent-color: var(--accent);
 }
 
+/* Raised out of footnote register. These sentences carry the concepts the app
+   exists to teach, so they are set at the same size and weight as other reading
+   text rather than in the smallest, lightest style in the system. */
 .slider-hint {
-  margin: var(--space-1) 0 0;
-  font-size: var(--fs-micro);
-  line-height: var(--lh-micro);
-  color: var(--text-muted);
+  margin: var(--space-2) 0 0;
+  max-width: 46ch;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  color: var(--text-secondary);
 }
 
 /* -------------------------------------------------------------------- bars */
@@ -299,7 +303,7 @@ body {
 
 .bar-button {
   display: grid;
-  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 5.5rem;
+  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.75rem 4.75rem 4.75rem;
   align-items: center;
   gap: var(--space-2);
   width: 100%;
@@ -442,10 +446,11 @@ body {
 }
 
 .tail-caption {
-  margin: 0 0 var(--space-3);
-  font-size: var(--fs-micro);
-  line-height: var(--lh-micro);
-  color: var(--text-muted);
+  margin: var(--space-3) 0;
+  max-width: 78ch;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  color: var(--text-secondary);
 }
 
 /* ------------------------------------------------------------------- stats */
@@ -580,7 +585,7 @@ body {
   /* The token column gives way first: the bar itself carries the comparison, so
      it keeps its width down to the narrowest viewport. */
   .bar-button {
-    grid-template-columns: 1.25rem minmax(3.25rem, 5rem) minmax(0, 1fr) 4.75rem;
+    grid-template-columns: 1.25rem minmax(3rem, 4.5rem) minmax(0, 1fr) 3.75rem 3.75rem 3.75rem;
     gap: var(--space-1);
   }
 
@@ -595,4 +600,110 @@ body {
 .stat-value.is-excluded {
   color: var(--text-muted);
   text-decoration: line-through;
+}
+
+/* ------------------------------------------------------------------ legend */
+
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--border);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  color: var(--text-secondary);
+}
+
+.legend-title {
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+}
+
+.legend-ramp {
+  display: inline-flex;
+}
+
+/* The swatches reuse the .tok classes, so the key is painted by the same rules
+   as the text it describes and cannot drift out of step with it. */
+.legend-swatch {
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  color: var(--text-primary);
+  cursor: default;
+}
+
+.legend-note {
+  flex-basis: 100%;
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+}
+
+/* The running total. Top-p thresholds against this number, so it sits in the
+   chart rather than in a caption: the row where it first reaches p is the row
+   the hairline is drawn under. */
+.bar-cumulative {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+  text-align: right;
+  contain: content;
+}
+
+.bar-row.is-nucleus-edge .bar-cumulative {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.bar-header {
+  height: 1.25rem;
+  display: grid;
+  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.75rem 4.75rem 4.75rem;
+  align-items: end;
+  gap: var(--space-2);
+  padding: 0 var(--space-1);
+}
+
+.bar-header .bar-token,
+.bar-header .bar-percent,
+.bar-header .bar-cumulative {
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+.bar-header .bar-track {
+  background: none;
+}
+
+@media (max-width: 860px) {
+  .bar-header {
+    grid-template-columns: 1.25rem minmax(3rem, 4.5rem) minmax(0, 1fr) 3.75rem 3.75rem 3.75rem;
+    gap: var(--space-1);
+  }
+}
+
+/* The renormalised probability: the only column on the post-cut basis, and the
+   one whose value the solid bar draws. */
+.bar-after {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  color: var(--text-primary);
+  text-align: right;
+  contain: content;
+}
+
+.bar-row.is-excluded .bar-after {
+  color: var(--text-muted);
+}
+
+.bar-header .bar-after {
+  font-size: var(--fs-micro);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
 }

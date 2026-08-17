@@ -68,11 +68,14 @@
 
   /* The second channel, so surprisal survives greyscale and colour-blindness.
    * Thickness, not colour: a rule under the token, absent at step 1. */
+  /* Five distinct weights, not three. Two pairs previously shared a value, so
+     the underline -- the channel that exists precisely so the signal is not
+     colour-only -- collapsed five buckets into three for anyone reading it. */
   --surprisal-underline-1: 0;
   --surprisal-underline-2: 1px;
-  --surprisal-underline-3: 1px;
+  --surprisal-underline-3: 1.5px;
   --surprisal-underline-4: 2px;
-  --surprisal-underline-5: 2px;
+  --surprisal-underline-5: 3px;
   --surprisal-underline-color: #b45309; /* 4.86:1 on --surface, 5.02:1 on --surface-raised -- AA
                                          * even though a rule is not text, so the redundant
                                          * channel is never the weaker one */

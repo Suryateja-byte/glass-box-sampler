@@ -157,6 +157,46 @@ the app with real input events and reading back the DOM.
 - Live mode is built but **cannot be smoke-tested**: there is no `OPENAI_API_KEY`
   in this environment. It ships behind the replay default and the README says so.
 
+## Wave 1 — the candidates panel did not reconcile
+
+**Verdict on wave 0: FAIL.** A fresh critic, given only the goal, the bar and the
+evidence, found that the panel's numbers contradicted each other and got worse
+under the controls the panel exists to explain. Reproduced before changing
+anything, on one paused step of the factual fixture:
+
+| settings | leader bar | ten bars sum | CHOSEN P | tail line |
+|---|---|---|---|---|
+| T=0.8, p=1.00 | 95.8% | 99.96% | 95.8% | 2.5% outside → 102.5% total |
+| T=2.0, p=1.00 | 55.5% | 100.02% | **95.8%** | 2.5% |
+| T=2.0, p=0.35 | 100.0% | **144.52%** | **95.8%** | 2.5% |
+
+Three distinct defects, all mine:
+
+1. **Two normalisations in one chart.** Survivors were drawn renormalised while
+   discarded candidates kept their pre-cut length. I had chosen that so the
+   discarded ones stayed visible; the cost was ten bars summing to 144%.
+2. **The tail was counted twice.** Softmax over the top ten already renormalises
+   to 1, so the bars sum to 100% — and an "everything else, 2.5%" line beside
+   them added the residual a second time.
+3. **CHOSEN P was frozen while everything around it was live**, printing 95.8%
+   next to a committed-token bar drawn at 55.5%.
+
+**Fixes.** The bars are now two explicit layers: a full-height ghost for the
+distribution before the cut, and a vertically inset solid fill for what
+survives. Each layer sums to 100% on its own, and the overhang of fill past
+ghost is the redistributed mass — renormalisation became something visible
+rather than something the caption asserted. The tail is stated once, as
+coverage. CHOSEN P tracks the sliders like every other figure in its row; the
+value the sampler actually faced stays on the token in the transcript.
+Discarded rows read `was 3.25%` rather than a struck-through number, because a
+column of ten percentages invites being summed, and a reader who sums them and
+gets 144% is right to stop trusting the panel.
+
+**Verified after:** live figures sum to 100.00% at every setting tested, CHOSEN P
+tracks the leader bar (95.8% → 55.5% → 100.0%), and no gate regressed — frame
+p95 unchanged at 6.20ms despite a second animated layer per row, Lighthouse
+still 100/100, determinism still byte-identical (`evidence/wave-1/`).
+
 ## Failed approaches (kept so they are not retried)
 
 - **Idle-page frame measurement** — abandoned. Not a tuning problem: an idle

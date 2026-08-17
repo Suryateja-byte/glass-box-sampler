@@ -104,6 +104,20 @@ export const COPY = {
     /** Shown when top-p has cut the list, where two normalisations are on screen. */
     nucleusExplain:
       'Faint bars are the distribution before the cut. Solid bars are what survives, renormalised to sum to 100% — the gap between the two is the renormalisation.',
+    /**
+     * States the cut as arithmetic the reader can check against the Σp column.
+     *
+     * Top-p is a rule about a running total, so the running total is on screen
+     * and this sentence names the row where it crossed. A hairline between two
+     * rows says only that a cut happened; this says why it happened there.
+     */
+    cutExplain: (
+      topP: number,
+      kept: number,
+      reached: number,
+      total: number,
+    ): string =>
+      `Σp first reaches top-p = ${topP.toFixed(2)} at rank ${kept} (${percent(reached)}), so ranks ${kept + 1}–${total} are dropped and the survivors are renormalised. Faint bars are the distribution before that cut; the gap to the solid bar is the mass redistributed to it.`,
     empty: 'No step selected. Pick a token in the completion to see the distribution it came from.',
   },
 
