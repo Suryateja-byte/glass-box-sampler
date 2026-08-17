@@ -15,7 +15,7 @@ Live status of the build. Open `progress.html` for the same thing in a browser.
 ## Gate status
 
 All measured by `npm run harness`. The figures below are from
-`evidence/wave-9/`, on commit `b4470df0` with a clean tree — the redesign
+`evidence/wave-10/`, on commit `72b4b0fa` with a clean tree — the published
 build. The harness self-test row is the exception: it grades the harness against
 mock pages rather than the app, and its bundle is `evidence/selftest/`.
 Nothing here is a claim without a bundle behind it.
