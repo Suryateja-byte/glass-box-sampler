@@ -346,6 +346,120 @@ body {
   cursor: pointer;
 }
 
+/* The dropped-open list is drawn by the browser, not by this stylesheet, and
+   these two properties are the only ones that reliably reach it. Without them
+   the popup renders in the platform's own colours -- a light highlight bar and
+   system-blue text on black -- which is the one part of the app that looked
+   borrowed from somewhere else. */
+.select option {
+  background-color: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+/*
+ * Where the browser can hand over the picker, take it.
+ *
+ * `appearance: base-select` opts into a select the page renders itself:
+ * real elements, real CSS, and the keyboard behaviour, focus handling and
+ * accessibility tree still supplied by the browser. That last part is why this
+ * is worth doing and why a hand-rolled listbox is not -- typeahead, Home/End,
+ * Escape and the screen-reader semantics come for free and cannot drift.
+ *
+ * Everything below is inside @supports, so a browser without it keeps the
+ * native control above rather than a half-styled imitation of one.
+ */
+@supports (appearance: base-select) {
+  .select,
+  .select::picker(select) {
+    appearance: base-select;
+  }
+
+  .select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    /* The drawn chevron replaces the painted one. */
+    background-image: none;
+    padding-right: var(--space-3);
+    text-align: left;
+  }
+
+  /* Chrome draws a solid disclosure triangle here. Swap in the same chevron the
+     fallback path paints, so the control looks identical either side of the
+     @supports boundary. */
+  .select::picker-icon {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23949aa4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E")
+      no-repeat center / 14px 14px;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+
+  .select:open::picker-icon {
+    transform: rotate(180deg);
+  }
+
+  /*
+   * The popup. A panel, like every other surface that leaves the flow.
+   *
+   * Only painted here, never positioned. The UA already anchors this under the
+   * button, matches its width and flips it above when the viewport is short --
+   * and it does so through the anchor machinery, which an explicit
+   * `top: anchor(bottom)` here cannot reach: overriding `position-area` drops
+   * the implicit anchor, `anchor()` then fails to resolve, and the list lands
+   * in the top-left corner of the screen. Measured, not assumed.
+   */
+  .select::picker(select) {
+    margin-top: var(--space-1);
+    padding: var(--space-1);
+    background: var(--surface-raised);
+    border: var(--border-width) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-popover);
+  }
+
+  .select option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-sm);
+    cursor: pointer;
+  }
+
+  .select option:hover,
+  .select option:focus {
+    background: var(--accent-soft);
+    color: var(--text-primary);
+    outline: none;
+  }
+
+  .select option:checked {
+    color: var(--text-primary);
+  }
+
+  /* A dot in the accent rather than the platform's tick: the same mark the
+     chart uses for "this is the one that was taken". */
+  .select option::checkmark {
+    content: '';
+    flex: none;
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-round);
+    background: var(--accent);
+  }
+
+  .select option:not(:checked)::checkmark {
+    background: transparent;
+  }
+}
+
 .transport {
   display: flex;
   align-items: center;
