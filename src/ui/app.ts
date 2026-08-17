@@ -232,7 +232,7 @@ export function createApp(options: AppOptions): void {
     panel(COPY.sections.candidates, COPY.candidates.explain(K), bars.element, tailCaption, stats.element),
     panel(
       COPY.sections.completion,
-      COPY.fork.hint,
+      COPY.completionHint,
       trail.element,
       stream.element,
       mountSurprisalLegend({
