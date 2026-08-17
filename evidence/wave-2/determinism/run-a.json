@@ -1,0 +1,2982 @@
+{
+  "fixtureId": "factual",
+  "seed": 42,
+  "engineVersion": "1",
+  "steps": [
+    {
+      "index": 0,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " Paris",
+      "temperature": 0.8,
+      "topP": 1,
+      "entropyBits": 0.32868330263161283,
+      "surprisalBits": 0.053662778877695175,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " Paris",
+          "pDisplayed": 0.9634870768997587,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Par",
+          "pDisplayed": 0.009952241728110897,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.008008334605968156,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " central",
+          "pDisplayed": 0.004846111230098109,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " France",
+          "pDisplayed": 0.004444218664954301,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " downtown",
+          "pDisplayed": 0.0031555263897458424,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Europe",
+          "pDisplayed": 0.0022370019967338007,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " western",
+          "pDisplayed": 0.0014564275812481934,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " northern",
+          "pDisplayed": 0.0012169470751554666,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.0011961138282264448,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ",",
+      "temperature": 0.8,
+      "topP": 1,
+      "entropyBits": 0.1509819912034529,
+      "surprisalBits": 0.021561956904396436,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ",",
+          "pDisplayed": 0.9851655216575561,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ".",
+          "pDisplayed": 0.004948203935113392,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.003003643102278353,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.0021801140007298623,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.0017455172312832309,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.0010026895296594805,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " ,",
+          "pDisplayed": 0.0006597633422230067,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ")",
+          "pDisplayed": 0.000513630917571949,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.00043520293882278344,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.00034571334476190727,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " France",
+      "temperature": 0.8,
+      "topP": 1,
+      "entropyBits": 0.8941182978069518,
+      "surprisalBits": 0.21002838993089337,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " France",
+          "pDisplayed": 0.8645202187653231,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Fran",
+          "pDisplayed": 0.05857378213708391,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Europe",
+          "pDisplayed": 0.02816576385409516,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.018148645732976386,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " northern",
+          "pDisplayed": 0.011041597071544954,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Paris",
+          "pDisplayed": 0.008269453649154724,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Grenelle",
+          "pDisplayed": 0.0049579864103934555,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Passy",
+          "pDisplayed": 0.002984126853498552,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Trocadéro",
+          "pDisplayed": 0.0018776851081092926,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Montparnasse",
+          "pDisplayed": 0.0014607404178205005,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ",",
+      "temperature": 0.8,
+      "topP": 1,
+      "entropyBits": 0.16340041295620406,
+      "surprisalBits": 0.026811175446184797,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ",",
+          "pDisplayed": 0.9815875287701581,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ".",
+          "pDisplayed": 0.011921666254437836,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.003011779765721966,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.0015467078251651097,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.0009666729403438283,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ")",
+          "pDisplayed": 0.0004413652294108256,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.0002604774953619336,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.00012500612264918648,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.00008449513572286159,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.00005430046102830766,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " on",
+      "temperature": 0.8,
+      "topP": 1,
+      "entropyBits": 0.2827826582931527,
+      "surprisalBits": 0.049499028933082834,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.9662718053538116,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " beside",
+          "pDisplayed": 0.017501146912458274,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " near",
+          "pDisplayed": 0.006853530470368355,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " along",
+          "pDisplayed": 0.004073337413028718,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " at",
+          "pDisplayed": 0.0025079424266768657,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " overlooking",
+          "pDisplayed": 0.001118350874396352,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.0007089910801885982,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0004262023338581283,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " by",
+          "pDisplayed": 0.00031166976932323943,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " with",
+          "pDisplayed": 0.00022702336588968454,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " the",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.368357937539124,
+      "surprisalBits": 0.8760288771379169,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.5448651499185206,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.09819726196139951,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Paris",
+          "pDisplayed": 0.074538690988747,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.06562084028076262,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " that",
+          "pDisplayed": 0.05526729553150653,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " along",
+          "pDisplayed": 0.044000646751365106,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " by",
+          "pDisplayed": 0.03477618567019967,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " with",
+          "pDisplayed": 0.03161408764202322,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " of",
+          "pDisplayed": 0.028417505118735798,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " from",
+          "pDisplayed": 0.022702336136739887,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "branchId": "root/12.2",
+      "chosenIndex": 3,
+      "chosenTokenText": " Seine",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.775692547094333,
+      "surprisalBits": 3.5510518215119955,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " Champ",
+          "pDisplayed": 0.4067815140873975,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Cham",
+          "pDisplayed": 0.12618596365203244,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " left",
+          "pDisplayed": 0.09489649021335932,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Seine",
+          "pDisplayed": 0.08531529279301774,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " park",
+          "pDisplayed": 0.06873910291153836,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Montparnasse",
+          "pDisplayed": 0.05609657286313137,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " river",
+          "pDisplayed": 0.05018334611097546,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " city",
+          "pDisplayed": 0.03958270264254905,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " district",
+          "pDisplayed": 0.03780837809831011,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " esplanade",
+          "pDisplayed": 0.03441063662768891,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ".",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.1543564345676733,
+      "surprisalBits": 0.7369731962880407,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ".",
+          "pDisplayed": 0.5999968383747404,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.09628758455468825,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.07371463728808124,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.05656197195570546,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.0432903560345687,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.035242029345331057,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.031172175494038425,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.02407485382047788,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.022615610226448996,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " ,",
+          "pDisplayed": 0.01704394290591975,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "branchId": "root/12.2",
+      "chosenIndex": 4,
+      "chosenTokenText": " That",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.4794080748849505,
+      "surprisalBits": 4.226423967492568,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " The",
+          "pDisplayed": 0.5072273991467371,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Its",
+          "pDisplayed": 0.11221401790660812,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " This",
+          "pDisplayed": 0.08267356669213966,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " A",
+          "pDisplayed": 0.07022812852836398,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " That",
+          "pDisplayed": 0.05342193460730961,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " One",
+          "pDisplayed": 0.04722500040972938,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Built",
+          "pDisplayed": 0.03898665554495457,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Designed",
+          "pDisplayed": 0.036144631164256806,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Construction",
+          "pDisplayed": 0.0292108998473066,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Gustave",
+          "pDisplayed": 0.022667766152594304,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " wrought",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.698283880338215,
+      "surprisalBits": 1.351766509970485,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " wrought",
+          "pDisplayed": 0.39181200035574903,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " iron",
+          "pDisplayed": 0.1700044535093145,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " lattice",
+          "pDisplayed": 0.11972705780214428,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " famous",
+          "pDisplayed": 0.08672243653057013,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " riveted",
+          "pDisplayed": 0.06512491102284765,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " landmark",
+          "pDisplayed": 0.04891424357995218,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " pylon",
+          "pDisplayed": 0.041926690706312775,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " spire",
+          "pDisplayed": 0.03197723149659082,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " engineer",
+          "pDisplayed": 0.023541778090162325,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " company",
+          "pDisplayed": 0.020249196906356196,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "branchId": "root/12.2",
+      "chosenIndex": 5,
+      "chosenTokenText": "‑",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.3166753447646835,
+      "surprisalBits": 4.52128549951005,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": "-",
+          "pDisplayed": 0.5708699825931218,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "–",
+          "pDisplayed": 0.07822798769941301,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "—",
+          "pDisplayed": 0.06126679295189894,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.05657909000949422,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.05113245805193674,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "‑",
+          "pDisplayed": 0.04354692021770087,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "_",
+          "pDisplayed": 0.040957808770659736,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.03635738992494327,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.03205456101141454,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.029007008769416757,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": "iron",
+      "temperature": 2,
+      "topP": 1,
+      "entropyBits": 2.3798497408961983,
+      "surprisalBits": 0.9172195931340034,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": "iron",
+          "pDisplayed": 0.5295285614736948,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "steel",
+          "pDisplayed": 0.1168969297283287,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "metal",
+          "pDisplayed": 0.08285338533461048,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "lace",
+          "pDisplayed": 0.07013788596561137,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "ir",
+          "pDisplayed": 0.05504781130385957,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "ironed",
+          "pDisplayed": 0.04015946301071585,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "irons",
+          "pDisplayed": 0.03425772559353131,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "work",
+          "pDisplayed": 0.029389445228314305,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "clad",
+          "pDisplayed": 0.022722908577767778,
+          "inNucleus": true
+        },
+        {
+          "tokenText": "like",
+          "pDisplayed": 0.019005883783565807,
+          "inNucleus": true
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "branchId": "root/12.2",
+      "chosenIndex": 2,
+      "chosenTokenText": " frame",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0.4156465446784949,
+      "surprisalBits": 5.506823474247576,
+      "origin": "forced",
+      "candidates": [
+        {
+          "tokenText": " lattice",
+          "pDisplayed": 0.9161370020570186,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " latt",
+          "pDisplayed": 0.0838629979429813,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " frame",
+          "pDisplayed": 0.02199282170471537,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " metal",
+          "pDisplayed": 0.01317256310781778,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " girder",
+          "pDisplayed": 0.0065919766921535925,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " firm",
+          "pDisplayed": 0.002424858705268463,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " exposition",
+          "pDisplayed": 0.0014034496713972383,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " fair",
+          "pDisplayed": 0.0008313634860592254,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " centenary",
+          "pDisplayed": 0.0005344692776230726,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " ironwork",
+          "pDisplayed": 0.0002480630186933728,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " still",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " still",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " of",
+          "pDisplayed": 0.0035657651906323222,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " as",
+          "pDisplayed": 0.0026150194300163655,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.002229996685469637,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.0016165271266350375,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.001379372479241589,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " and",
+          "pDisplayed": 0.0008139598922775285,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " by",
+          "pDisplayed": 0.0007282808863553437,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " for",
+          "pDisplayed": 0.0004835682779603761,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0003722328740152615,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " stands",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0.3376061316549549,
+      "surprisalBits": 0.093233935519952,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " stands",
+          "pDisplayed": 0.9374190799919387,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " spire",
+          "pDisplayed": 0.06258092000806127,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " engineer",
+          "pDisplayed": 0.023104456878819415,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " company",
+          "pDisplayed": 0.011547889352802224,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " firm",
+          "pDisplayed": 0.0038907250848511732,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " exposition",
+          "pDisplayed": 0.0027720931377820677,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " fair",
+          "pDisplayed": 0.0012044943148168288,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " centenary",
+          "pDisplayed": 0.0006747403560936891,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " ironwork",
+          "pDisplayed": 0.0004448147748544881,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " frame",
+          "pDisplayed": 0.00023960580697995017,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ".",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ".",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ",",
+          "pDisplayed": 0.007885273805489782,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.0026432515362057878,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.0013072553698343912,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.0005000163485955971,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.00030406391862382813,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.000203968108802033,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.00009501760817635388,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.00004319581658374531,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.00002383200360093049,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " It",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " It",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " The",
+          "pDisplayed": 0.007079128688243349,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Its",
+          "pDisplayed": 0.0032584055360428883,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " That",
+          "pDisplayed": 0.0018648503964545447,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Today",
+          "pDisplayed": 0.0017049780931685512,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " This",
+          "pDisplayed": 0.0008846383961804359,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Paris",
+          "pDisplayed": 0.0005569797978080036,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Standing",
+          "pDisplayed": 0.0003776175182130387,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Engineers",
+          "pDisplayed": 0.00031558709062678026,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Nothing",
+          "pDisplayed": 0.00022422380531145244,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " stands",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " stands",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " climbs",
+          "pDisplayed": 0.030459657891551476,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " rises",
+          "pDisplayed": 0.015332080557602542,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " reaches",
+          "pDisplayed": 0.012074864442077695,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " measures",
+          "pDisplayed": 0.005552756907840423,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " towers",
+          "pDisplayed": 0.004422497335548124,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " skyline",
+          "pDisplayed": 0.0032649782985163063,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " structure",
+          "pDisplayed": 0.0022973886675846803,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " metres",
+          "pDisplayed": 0.001543055504550927,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " feet",
+          "pDisplayed": 0.0013658623305271727,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " about",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " about",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " some",
+          "pDisplayed": 0.00818740802154877,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " roughly",
+          "pDisplayed": 0.0034201943156054477,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.001994704538392776,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.0009450383446445203,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.0005841486587059816,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " for",
+          "pDisplayed": 0.00043472518570342693,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.0003837269443779482,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0001965618090232145,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " and",
+          "pDisplayed": 0.00015563375194167775,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " 330",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " 330",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " 324",
+          "pDisplayed": 0.031491886836866,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 300",
+          "pDisplayed": 0.014369734696986014,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 320",
+          "pDisplayed": 0.010250755195643802,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 312",
+          "pDisplayed": 0.006062901757530571,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 350",
+          "pDisplayed": 0.005097498615805864,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 301",
+          "pDisplayed": 0.00265809187020174,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 276",
+          "pDisplayed": 0.0016130228285951029,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 200",
+          "pDisplayed": 0.001609570051830148,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " 400",
+          "pDisplayed": 0.001015845611570654,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " metres",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " metres",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " meters",
+          "pDisplayed": 0.009717904990619678,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " met",
+          "pDisplayed": 0.004797709568135028,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " m",
+          "pDisplayed": 0.002224218846126289,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " feet",
+          "pDisplayed": 0.0014676485407468128,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " skyline",
+          "pDisplayed": 0.0007610808728229382,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " structure",
+          "pDisplayed": 0.00042964146242601477,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " storeys",
+          "pDisplayed": 0.0003352409825102195,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " height",
+          "pDisplayed": 0.00017738499459225894,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tower",
+          "pDisplayed": 0.00012943103556934145,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " tall",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " tall",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " high",
+          "pDisplayed": 0.055881180113613406,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.018654664541959406,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " overall",
+          "pDisplayed": 0.010268920830172808,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " altogether",
+          "pDisplayed": 0.004888699045892551,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " height",
+          "pDisplayed": 0.0023676629395258564,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tower",
+          "pDisplayed": 0.0012626941504485093,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summit",
+          "pDisplayed": 0.0005618111655108836,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " antennas",
+          "pDisplayed": 0.00029668642975843706,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " record",
+          "pDisplayed": 0.0002112616087888273,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ",",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ",",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ".",
+          "pDisplayed": 0.00877205958223676,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.0031549828224330745,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.0010423778316896158,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.0004908940549143726,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.0002978975867990257,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.00012291354075903997,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.0000842667111789246,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.00003247019579489559,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.000023705800356516177,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " which",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " which",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " and",
+          "pDisplayed": 0.007386283202152226,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " that",
+          "pDisplayed": 0.003280111828731328,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " this",
+          "pDisplayed": 0.0028821528029726253,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.0015944205410532617,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.001469270600290347,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " for",
+          "pDisplayed": 0.0009180180756128239,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.0005299023768313419,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0005161667838542678,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " it",
+          "pDisplayed": 0.0003107969912486687,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " kept",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " kept",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " gave",
+          "pDisplayed": 0.015958792710906916,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " made",
+          "pDisplayed": 0.009974994117504278,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " left",
+          "pDisplayed": 0.008972268260090805,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " held",
+          "pDisplayed": 0.005778517069160783,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " earned",
+          "pDisplayed": 0.0037753488975538463,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tower",
+          "pDisplayed": 0.0037190828319581424,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summit",
+          "pDisplayed": 0.0029370919068172287,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " antennas",
+          "pDisplayed": 0.002698375551838084,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " record",
+          "pDisplayed": 0.0016126910288819017,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " it",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " it",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.018187028449234192,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " this",
+          "pDisplayed": 0.005025252795605131,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " that",
+          "pDisplayed": 0.0021281314297897447,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Paris",
+          "pDisplayed": 0.000902103817705184,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.0005178639007209884,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " about",
+          "pDisplayed": 0.00023858935550980168,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " some",
+          "pDisplayed": 0.00013874982173271144,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.00006158560647412639,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.0000520095929878283,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " the",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " the",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.013007789733605741,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.004979736408983233,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " that",
+          "pDisplayed": 0.0020445630569246634,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " an",
+          "pDisplayed": 0.0007869716608585691,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.0005585984116858951,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.0002777895096216745,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " roughly",
+          "pDisplayed": 0.00011535920823936442,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.00008534783611450412,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " for",
+          "pDisplayed": 0.000054279339541239146,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " tallest",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " tallest",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " tall",
+          "pDisplayed": 0.03338925405733548,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " highest",
+          "pDisplayed": 0.021198790187125744,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " largest",
+          "pDisplayed": 0.012963842204776605,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " biggest",
+          "pDisplayed": 0.0072643884317601095,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " proudest",
+          "pDisplayed": 0.004430861848834359,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " structure",
+          "pDisplayed": 0.0023736217910605662,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " metres",
+          "pDisplayed": 0.0020421810913160295,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " feet",
+          "pDisplayed": 0.0011632108010687604,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " storeys",
+          "pDisplayed": 0.0011431917298594023,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " structure",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " structure",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " building",
+          "pDisplayed": 0.02695948633171956,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tower",
+          "pDisplayed": 0.015926695465716765,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " monument",
+          "pDisplayed": 0.011108805587848007,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " object",
+          "pDisplayed": 0.00807655348690464,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " thing",
+          "pDisplayed": 0.005958061835982415,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " years",
+          "pDisplayed": 0.003708184396151065,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " world",
+          "pDisplayed": 0.0033092668237552423,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " skyline",
+          "pDisplayed": 0.0016671446551554433,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " metres",
+          "pDisplayed": 0.0014530547870365395,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " on",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " on",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.012402350862440849,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " upon",
+          "pDisplayed": 0.004829176906079608,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " anywhere",
+          "pDisplayed": 0.002893526615376993,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " across",
+          "pDisplayed": 0.0015964922798120688,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " which",
+          "pDisplayed": 0.0008604427080437245,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " it",
+          "pDisplayed": 0.0004315090407266813,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.0002923402788050086,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.00013493089356790813,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.00011097935316048734,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " Earth",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " Earth",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.014084782535287605,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " earth",
+          "pDisplayed": 0.005999827243362755,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Europe",
+          "pDisplayed": 0.0025358183116222636,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " any",
+          "pDisplayed": 0.0017719880433448828,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " world",
+          "pDisplayed": 0.0008119987592681775,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " skyline",
+          "pDisplayed": 0.0004173091790303813,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " structure",
+          "pDisplayed": 0.00024636332656620245,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " metres",
+          "pDisplayed": 0.0001896703155348944,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " feet",
+          "pDisplayed": 0.00010424581013383472,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " for",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " for",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.005582455336825601,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " across",
+          "pDisplayed": 0.0038865932000003134,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.002374012499349247,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " during",
+          "pDisplayed": 0.0019131153562066032,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " roughly",
+          "pDisplayed": 0.0014632084034449252,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.0010229012882052677,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.0009361390125332588,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0008833395759491119,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " and",
+          "pDisplayed": 0.0005536483275672069,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " roughly",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " roughly",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.01075546114190016,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " about",
+          "pDisplayed": 0.004236066249909984,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " some",
+          "pDisplayed": 0.0024093384559316826,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.0012216602345662133,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " almost",
+          "pDisplayed": 0.0006824585379133713,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.0005451519875628072,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " for",
+          "pDisplayed": 0.0003484872955605977,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.0001999731691853029,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0001266163660312641,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " forty",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " forty",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " four",
+          "pDisplayed": 0.01891302917395115,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " sixty",
+          "pDisplayed": 0.010760274427677756,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " thirty",
+          "pDisplayed": 0.010557834613341486,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " fifty",
+          "pDisplayed": 0.007321783281410493,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " twenty",
+          "pDisplayed": 0.004503740175604332,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " storeys",
+          "pDisplayed": 0.004323920385661894,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " height",
+          "pDisplayed": 0.0027342645248603302,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tower",
+          "pDisplayed": 0.002661278837194012,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summit",
+          "pDisplayed": 0.002155801300045797,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " years",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " years",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " year",
+          "pDisplayed": 0.005612493314528163,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " decades",
+          "pDisplayed": 0.003872418888617235,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summers",
+          "pDisplayed": 0.0028255113232670756,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " seasons",
+          "pDisplayed": 0.0016770503235382045,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summit",
+          "pDisplayed": 0.0014267299278483254,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " antennas",
+          "pDisplayed": 0.0010249117286212847,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " record",
+          "pDisplayed": 0.0009587664245349625,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " title",
+          "pDisplayed": 0.0005546271327929406,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " world",
+          "pDisplayed": 0.00047158478814585814,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ".",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ".",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ",",
+          "pDisplayed": 0.0064404552183067384,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.00211860185031715,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.0009118803519103571,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.0005240112083647285,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.00021024911174782,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.00014222132950968716,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.00006182815160843581,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " ,",
+          "pDisplayed": 0.000029545505836364063,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ")",
+          "pDisplayed": 0.000017921279190311274,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " Today",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " Today",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " Each",
+          "pDisplayed": 0.012242559221437589,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Every",
+          "pDisplayed": 0.0049911385807601665,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " The",
+          "pDisplayed": 0.0017283643257235226,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Now",
+          "pDisplayed": 0.0010282749862986359,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Since",
+          "pDisplayed": 0.0004715607352662864,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " In",
+          "pDisplayed": 0.0002552321749539975,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " These",
+          "pDisplayed": 0.00016598863716745345,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " Millions",
+          "pDisplayed": 0.00008237560483180558,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " It",
+          "pDisplayed": 0.00006151234624672627,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " it",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " it",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.005492004525188718,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " this",
+          "pDisplayed": 0.0034552744279852617,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " one",
+          "pDisplayed": 0.0026983306711696894,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " she",
+          "pDisplayed": 0.0014975072363666113,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " each",
+          "pDisplayed": 0.0011926941508160313,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " every",
+          "pDisplayed": 0.0008105753507900169,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " more",
+          "pDisplayed": 0.0007050881825080201,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " than",
+          "pDisplayed": 0.000617858841415713,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.0005335675789705092,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " draws",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0.3935514042384832,
+      "surprisalBits": 0.11648554584216679,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " draws",
+          "pDisplayed": 0.9224319915551492,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " attracts",
+          "pDisplayed": 0.07756800844485084,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " receives",
+          "pDisplayed": 0.029565560988335588,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " welcomes",
+          "pDisplayed": 0.010070915663212733,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " sees",
+          "pDisplayed": 0.006312066133929096,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " hosts",
+          "pDisplayed": 0.002568109959003897,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " queues",
+          "pDisplayed": 0.0015335355983941124,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tickets",
+          "pDisplayed": 0.001121755074447377,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " lifts",
+          "pDisplayed": 0.00043811614841328633,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " views",
+          "pDisplayed": 0.0002597433567888603,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " close",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " close",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.016790743378768305,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " almost",
+          "pDisplayed": 0.006763829162016049,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " over",
+          "pDisplayed": 0.0024244747137936885,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " more",
+          "pDisplayed": 0.0009238160984503377,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " around",
+          "pDisplayed": 0.0005145722028189119,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.0002363305818967622,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.00015698341566143176,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.00008955052795926892,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " about",
+          "pDisplayed": 0.00004504626924794771,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " to",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " to",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " on",
+          "pDisplayed": 0.01719060364444532,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " at",
+          "pDisplayed": 0.005815186948458246,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.0019370907236332282,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " upon",
+          "pDisplayed": 0.0013555228140153688,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " the",
+          "pDisplayed": 0.0005393264633363876,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " a",
+          "pDisplayed": 0.0003639324282702436,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " its",
+          "pDisplayed": 0.00016143014324154664,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " about",
+          "pDisplayed": 0.00010329551191331962,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.00004889123875107687,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " seven",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0.44879039590368797,
+      "surprisalBits": 0.14198296997796606,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " seven",
+          "pDisplayed": 0.9062726361289282,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " six",
+          "pDisplayed": 0.09372736387107182,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " eight",
+          "pDisplayed": 0.01838912650132821,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " five",
+          "pDisplayed": 0.007650488782386589,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " ten",
+          "pDisplayed": 0.004556404495302995,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " three",
+          "pDisplayed": 0.0018245716610369655,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tourists",
+          "pDisplayed": 0.0010145602356173079,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " people",
+          "pDisplayed": 0.0005634438452700468,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " crowds",
+          "pDisplayed": 0.0002496679813923166,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " guests",
+          "pDisplayed": 0.00014694279910705256,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " million",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " million",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " mill",
+          "pDisplayed": 0.006270019797147148,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " hundred",
+          "pDisplayed": 0.003249875392822827,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " thousand",
+          "pDisplayed": 0.002323750253681295,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " billion",
+          "pDisplayed": 0.0012738390647460758,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " travellers",
+          "pDisplayed": 0.0007602632775052945,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " summer",
+          "pDisplayed": 0.0005049137629232937,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " season",
+          "pDisplayed": 0.00040840956445484147,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " queues",
+          "pDisplayed": 0.00025958441125154935,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tickets",
+          "pDisplayed": 0.00023845633686646187,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " visitors",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0.3350369679539547,
+      "surprisalBits": 0.09222382074073084,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " visitors",
+          "pDisplayed": 0.9380756514833244,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " visit",
+          "pDisplayed": 0.061924348516675644,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " tourists",
+          "pDisplayed": 0.028427697897775727,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " people",
+          "pDisplayed": 0.01040880954700375,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " guests",
+          "pDisplayed": 0.005024583271250515,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " travellers",
+          "pDisplayed": 0.003317223817921666,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " lifts",
+          "pDisplayed": 0.0025139575729109225,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " views",
+          "pDisplayed": 0.0009904130557149757,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " photographs",
+          "pDisplayed": 0.0007071898981740824,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " crowds",
+          "pDisplayed": 0.0006075667733222016,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " a",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " a",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " each",
+          "pDisplayed": 0.0045227037474384465,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " every",
+          "pDisplayed": 0.0026138127763915015,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " per",
+          "pDisplayed": 0.002541096557722955,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " this",
+          "pDisplayed": 0.0012616278686701317,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " nearly",
+          "pDisplayed": 0.0009925932695355496,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " some",
+          "pDisplayed": 0.0009099252115836308,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " close",
+          "pDisplayed": 0.0007225583119754046,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " to",
+          "pDisplayed": 0.0005616335291982172,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " in",
+          "pDisplayed": 0.00042951133204398545,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": " year",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": " year",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": " summer",
+          "pDisplayed": 0.010468612475290578,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " season",
+          "pDisplayed": 0.0044509865933008924,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " month",
+          "pDisplayed": 0.0030067637955558733,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " decade",
+          "pDisplayed": 0.0016674075644850397,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " queues",
+          "pDisplayed": 0.0011490880584150006,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " tickets",
+          "pDisplayed": 0.0005245621497217371,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " lifts",
+          "pDisplayed": 0.00036998870772791145,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " views",
+          "pDisplayed": 0.00035654979734251363,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " photographs",
+          "pDisplayed": 0.00017329871316752835,
+          "inNucleus": false
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "branchId": "root/12.2",
+      "chosenIndex": 0,
+      "chosenTokenText": ".",
+      "temperature": 0.7,
+      "topP": 0.9,
+      "entropyBits": 0,
+      "surprisalBits": 0,
+      "origin": "sampled",
+      "candidates": [
+        {
+          "tokenText": ".",
+          "pDisplayed": 1,
+          "inNucleus": true
+        },
+        {
+          "tokenText": ",",
+          "pDisplayed": 0.004242972724580465,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ";",
+          "pDisplayed": 0.0018327122895172502,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "!",
+          "pDisplayed": 0.0014243296482021638,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "...",
+          "pDisplayed": 0.0009689686650816893,
+          "inNucleus": false
+        },
+        {
+          "tokenText": ":",
+          "pDisplayed": 0.0006897511258950729,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " -",
+          "pDisplayed": 0.00042257302579956814,
+          "inNucleus": false
+        },
+        {
+          "tokenText": " --",
+          "pDisplayed": 0.0003125256543432043,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "?",
+          "pDisplayed": 0.00026477133314991793,
+          "inNucleus": false
+        },
+        {
+          "tokenText": "'",
+          "pDisplayed": 0.00018580425044334274,
+          "inNucleus": false
+        }
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "id": "root",
+      "parentId": null,
+      "forkStep": 0
+    },
+    {
+      "id": "root/12.2",
+      "parentId": "root",
+      "forkStep": 12
+    }
+  ],
+  "activeBranchId": "root/12.2",
+  "finalText": " Paris, France, on the Seine. That wrought‑iron frame still stands. It stands about 330 metres tall, which kept it the tallest structure on Earth for roughly forty years. Today it draws close to seven million visitors a year."
+}

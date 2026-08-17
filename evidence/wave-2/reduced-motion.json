@@ -1,0 +1,10 @@
+{
+  "verdict": "PASS",
+  "selfReport": {
+    "reduced": true,
+    "maxTransitionMs": 0,
+    "maxAnimationMs": 0
+  },
+  "computedStyleViolations": [],
+  "animationsWithNonZeroDuration": 0
+}

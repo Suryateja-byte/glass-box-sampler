@@ -582,16 +582,61 @@ body {
       'completion';
   }
 
-  /* The token column gives way first: the bar itself carries the comparison, so
-     it keeps its width down to the narrowest viewport. */
-  .bar-button {
-    grid-template-columns: 1.25rem minmax(3rem, 4.5rem) minmax(0, 1fr) 3.75rem 3.75rem 3.75rem;
-    gap: var(--space-1);
-  }
-
   .app-title {
     font-size: var(--fs-lg);
     line-height: var(--lh-lg);
+  }
+}
+
+/*
+ * Below this width the bar gets its own row.
+ *
+ * Six columns on a 375px screen squeezed the track to about 30px, which turned
+ * the chart -- the thing the panel is for -- into a sliver beside three columns
+ * of figures. Wrapping the track underneath costs a taller row and keeps both
+ * the numbers and the picture readable.
+ */
+@media (max-width: 720px) {
+  .bar-row {
+    height: auto;
+  }
+
+  .bar-button,
+  .bar-header {
+    grid-template-columns: 1.25rem minmax(0, 1fr) 3.5rem 3.5rem 3.5rem;
+    grid-template-areas:
+      'rank token p sp after'
+      'track track track track track';
+    gap: var(--space-1) var(--space-2);
+    padding: var(--space-1) var(--space-1) var(--space-2);
+  }
+
+  .bar-rank {
+    grid-area: rank;
+  }
+  .bar-token {
+    grid-area: token;
+  }
+  .bar-track {
+    grid-area: track;
+  }
+  .bar-percent {
+    grid-area: p;
+  }
+  .bar-cumulative {
+    grid-area: sp;
+  }
+  .bar-after {
+    grid-area: after;
+  }
+
+  .bar-header {
+    grid-template-areas: 'rank token p sp after';
+    height: auto;
+  }
+
+  .bar-header .bar-track {
+    display: none;
   }
 }
 
