@@ -68,6 +68,7 @@ export function createApp(options: AppOptions): void {
     rowDescription: (token, percent, rank) =>
       `${COPY.a11y.forkButton(token)}. Rank ${rank}, ${percent}`,
     excludedSuffix: ', excluded by top-p',
+    wasPrefix: 'was ',
   });
 
   const stream = mountStream({
@@ -81,7 +82,8 @@ export function createApp(options: AppOptions): void {
     entropyLabel: COPY.entropy.label,
     entropyHint: COPY.entropy.explain,
     chosenLabel: 'Chosen p',
-    chosenHint: COPY.surprisal.explain,
+    chosenHint:
+      'The probability these settings give the token that was committed. It moves with the sliders, like the accent bar above it; what the sampler actually faced is recorded on the token itself.',
     nucleusLabel: 'Nucleus',
     nucleusHint: COPY.topP.explain,
     tailLabel: COPY.candidates.tailLabel,
@@ -228,7 +230,13 @@ export function createApp(options: AppOptions): void {
     }
     const display = engine.computeDisplay(record.distribution, engine.getState().settings);
     bars.update(record.distribution, display, record.chosenIndex);
-    tailCaption.textContent = COPY.candidates.tailExplain(record.distribution.tailMass);
+    // When top-p has cut the list there are two normalisations on screen, so
+    // the caption names them. Otherwise the ghosts sit exactly under the fills
+    // and there is nothing extra to explain.
+    tailCaption.textContent =
+      display.nucleusSize < display.count
+        ? `${COPY.candidates.nucleusExplain} ${COPY.candidates.tailExplain(record.distribution.tailMass)}`
+        : COPY.candidates.tailExplain(record.distribution.tailMass);
   });
 
   scheduler.register(Dirty.Stats, () => {

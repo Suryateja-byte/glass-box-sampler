@@ -19,6 +19,29 @@ export interface StatsHandle {
   ): void;
 }
 
+/**
+ * The chosen token's probability UNDER THE CURRENT SETTINGS, not the value
+ * frozen when it was committed.
+ *
+ * Every other number in this panel recomputes as the sliders move, and the
+ * accent bar directly above it does too. A frozen figure here read as a second,
+ * contradictory probability for the same token -- 96.8% printed beside a bar
+ * drawn at 57.0%. What the sampler actually faced is still recorded: it is on
+ * the token in the transcript, where history belongs.
+ */
+function chosenProbability(
+  display: DisplayDistribution,
+  record: TokenRecord | null,
+): { text: string; excluded: boolean } | null {
+  if (!record) return null;
+  const index = record.chosenIndex;
+  const inNucleus = index < display.nucleusSize;
+  const probability = inNucleus
+    ? (display.nucleusProbs[index] ?? 0)
+    : (display.probs[index] ?? 0);
+  return { text: `${(probability * 100).toFixed(1)}%`, excluded: !inNucleus };
+}
+
 interface Readout {
   readonly value: HTMLElement;
   last: string;
@@ -76,12 +99,22 @@ export function mountStats(labels: {
       }
 
       write(entropy, `${display.entropyBits.toFixed(2)} bits`);
-      write(
-        chosen,
-        record ? `${(record.chosenProb * 100).toFixed(1)}%` : labels.empty,
-      );
+
+      const chosenNow = chosenProbability(display, record);
+      write(chosen, chosenNow ? chosenNow.text : labels.empty);
+      chosen.value.classList.toggle('is-excluded', chosenNow?.excluded === true);
+
       write(nucleus, `${display.nucleusSize} of ${display.count}`);
-      write(tail, `${(distribution.tailMass * 100).toFixed(1)}%`);
+
+      // Coverage, not a slice of the chart above.
+      //
+      // The bars renormalise over the ten candidates the endpoint returned, so
+      // they always sum to 100%. Printing the residual mass as though it were
+      // an eleventh slice made the panel assert 102.5% -- the tail counted
+      // twice, once inside the renormalisation and once beside it. Stating it
+      // as how much of the distribution these ten covered is the same fact
+      // without the contradiction.
+      write(tail, `${((1 - distribution.tailMass) * 100).toFixed(1)}%`);
     },
   };
 }

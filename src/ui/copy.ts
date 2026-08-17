@@ -88,10 +88,22 @@ export const COPY = {
       `The ${k} highest-probability tokens at this step, after temperature and top-p. Bar length is probability. The accent bar is the token that was committed.`,
     /** The honest caveat about seeing only the head of the distribution. */
     headOnly:
-      'These are the top candidates, not the vocabulary. The model chooses from tens of thousands of tokens at every step; the endpoint returns only the head, so the rest is reported as one number.',
-    tailLabel: 'Everything else',
+      'These are the top candidates, not the vocabulary. The model chooses from tens of thousands of tokens at every step, and the endpoint returns only the head.',
+    tailLabel: 'Top-10 coverage',
+    /**
+     * States what the ten candidates covered, rather than printing the residual
+     * as though it were an eleventh bar.
+     *
+     * The bars renormalise over these ten, so they sum to 100% by construction.
+     * An "everything else: 2.5%" line beside them made the panel add up to
+     * 102.5% and contradicted the top-p explanation two panels away. The
+     * coverage figure carries the same information and reconciles.
+     */
     tailExplain: (mass: number): string =>
-      `${percent(mass)} of the probability mass sits outside the candidates shown. It is summed, never itemised — the endpoint does not report which tokens it contains.`,
+      `The ten candidates above held ${percent(1 - mass)} of the probability mass at T = 1; the remaining ${percent(mass)} was spread over the rest of the vocabulary, which the endpoint does not itemise. Bar lengths renormalise over these ten, so they sum to 100%.`,
+    /** Shown when top-p has cut the list, where two normalisations are on screen. */
+    nucleusExplain:
+      'Faint bars are the distribution before the cut. Solid bars are what survives, renormalised to sum to 100% — the gap between the two is the renormalisation.',
     empty: 'No step selected. Pick a token in the completion to see the distribution it came from.',
   },
 

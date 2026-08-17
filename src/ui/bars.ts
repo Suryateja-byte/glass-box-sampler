@@ -35,8 +35,10 @@ interface Row {
   readonly root: HTMLLIElement;
   readonly button: HTMLButtonElement;
   readonly token: HTMLSpanElement;
+  readonly ghost: HTMLSpanElement;
   readonly fill: HTMLSpanElement;
   readonly percent: HTMLSpanElement;
+  lastGhost: number;
   // Last written values, so an unchanged row costs a comparison instead of a
   // DOM write. Text writes are the expensive part of this render.
   //
@@ -64,6 +66,8 @@ export function mountBars(labels: {
   regionLabel: string;
   rowDescription: (token: string, percent: string, rank: number) => string;
   excludedSuffix: string;
+  /** Marks a discarded candidate's percentage as a former value. */
+  wasPrefix: string;
 }): BarsHandle {
   const element = document.createElement('ol');
   element.className = 'bars';
@@ -94,9 +98,17 @@ export function mountBars(labels: {
 
     const track = document.createElement('span');
     track.className = 'bar-track';
+    // Two layers, because top-p puts two different normalisations on screen at
+    // once. The ghost is the distribution before the cut; the fill is what
+    // survives after renormalising. Drawing only one of them forces a choice
+    // between hiding what was discarded and showing bars that do not sum to
+    // anything -- and the growth from ghost to fill IS renormalisation, which
+    // is the thing this panel exists to make visible.
+    const ghost = document.createElement('span');
+    ghost.className = 'bar-ghost';
     const fill = document.createElement('span');
     fill.className = 'bar-fill';
-    track.append(fill);
+    track.append(ghost, fill);
 
     const percent = document.createElement('span');
     percent.className = 'bar-percent';
@@ -111,9 +123,11 @@ export function mountBars(labels: {
       root,
       button,
       token,
+      ghost,
       fill,
       percent,
       lastScale: -1,
+      lastGhost: -1,
       lastPercent: '',
       lastToken: '',
       lastState: '',
@@ -141,27 +155,46 @@ export function mountBars(labels: {
         }
         if (row.lastScale !== 0) {
           row.fill.style.transform = 'scaleX(0)';
+          row.ghost.style.transform = 'scaleX(0)';
           row.lastScale = 0;
+          row.lastGhost = 0;
         }
         continue;
       }
 
       const candidate = distribution.candidates[rank]!;
       const inNucleus = rank < display.nucleusSize;
-      // Excluded candidates keep their true height and lose contrast instead of
-      // collapsing to zero. Seeing what top-p discarded is the entire point of
-      // showing the cutoff.
-      const probability = inNucleus
-        ? (display.nucleusProbs[rank] ?? 0)
-        : (display.probs[rank] ?? 0);
 
-      const scale = Math.max(0, Math.min(1, probability));
+      // Ghost: after temperature, before top-p. These ten always sum to 1.
+      const beforeCut = display.probs[rank] ?? 0;
+      // Fill: after top-p and renormalisation. The survivors also sum to 1.
+      // Each layer is internally consistent, so nothing on screen adds up to
+      // more than 100% however the sliders are set.
+      const afterCut = inNucleus ? (display.nucleusProbs[rank] ?? 0) : 0;
+
+      const ghostScale = Math.max(0, Math.min(1, beforeCut));
+      if (ghostScale !== row.lastGhost) {
+        row.ghost.style.transform = `scaleX(${ghostScale.toFixed(5)})`;
+        row.lastGhost = ghostScale;
+      }
+
+      const scale = Math.max(0, Math.min(1, afterCut));
       if (scale !== row.lastScale) {
         row.fill.style.transform = `scaleX(${scale.toFixed(5)})`;
         row.lastScale = scale;
       }
 
-      const percentText = formatPercent(probability);
+      // A survivor's label is its current, renormalised probability. A
+      // discarded candidate's is prefixed "was", because its number is now
+      // historical: top-p gave it zero.
+      //
+      // The prefix is doing real work. Struck-through alone still leaves ten
+      // percentages in a column, and a reader who adds them up gets 144% and
+      // rightly stops trusting the panel. "was 3.1%" cannot be summed into a
+      // total by mistake, so the live figures reconcile to 100% on their own.
+      const percentText = inNucleus
+        ? formatPercent(afterCut)
+        : `${labels.wasPrefix}${formatPercent(beforeCut)}`;
       const percentChanged = percentText !== row.lastPercent;
       if (percentChanged) {
         row.percent.textContent = percentText;
@@ -202,7 +235,7 @@ export function mountBars(labels: {
       if (percentChanged || tokenChanged || stateChanged) {
         row.button.setAttribute(
           'aria-label',
-          labels.rowDescription(candidate.text, formatPercent(probability), rank + 1) +
+          labels.rowDescription(candidate.text, percentText, rank + 1) +
             (inNucleus ? '' : labels.excludedSuffix),
         );
       }
