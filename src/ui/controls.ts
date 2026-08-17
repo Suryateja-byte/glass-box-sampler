@@ -36,6 +36,16 @@ export interface ControlsHandle {
   readonly element: HTMLElement;
   setStatus(status: 'idle' | 'streaming' | 'paused' | 'done' | 'error'): void;
   setPrompt(text: string): void;
+  /**
+   * Replay fixtures are keyed to their own prompt, so the field is read-only
+   * there and editable only in live mode.
+   *
+   * It was previously editable in both. You could type a new prompt, press Run,
+   * and get the old fixture streamed back at you under a full panel of correct
+   * arithmetic describing a prompt that was no longer on screen. A control that
+   * looks live and is silently inert is worse than no control.
+   */
+  setPromptEditable(editable: boolean, note: string): void;
   readonly promptValue: string;
   showError(message: string | null): void;
 }
@@ -251,6 +261,14 @@ export function mountControls(
     },
     setPrompt(text) {
       prompt.value = text;
+    },
+    setPromptEditable(editable, note) {
+      prompt.readOnly = !editable;
+      prompt.classList.toggle('is-readonly', !editable);
+      // A read-only textarea still takes focus and still shows a caret in some
+      // browsers, so say plainly what it is rather than relying on styling.
+      prompt.setAttribute('aria-readonly', String(!editable));
+      promptHint.textContent = note;
     },
     get promptValue() {
       return prompt.value;

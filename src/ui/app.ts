@@ -1,5 +1,5 @@
 import { Engine } from '../engine/engine';
-import type { FixtureFile, SamplerSource } from '../engine/types';
+import type { FixtureFile, SamplerSource, StepDistribution } from '../engine/types';
 import { K } from '../engine/types';
 import { LiveSource, clearApiKey, setApiKey } from '../sources/live';
 import { ReplaySource } from '../sources/replay';
@@ -135,7 +135,7 @@ export function createApp(options: AppOptions): void {
   const controls = mountControls(
     {
       promptLabel: COPY.sections.prompt,
-      promptHint: COPY.source.replayExactness,
+      promptHint: COPY.prompt.replayNote,
       fixtureLabel: 'Fixture',
       runLabel: COPY.buttons.run,
       pauseLabel: COPY.buttons.pause,
@@ -179,6 +179,11 @@ export function createApp(options: AppOptions): void {
         mode = next;
         engine.pause();
         source = makeSource();
+        controls.setPromptEditable(
+          next === 'live',
+          next === 'live' ? COPY.prompt.liveNote : COPY.prompt.replayNote,
+        );
+        if (next === 'replay') controls.setPrompt(fixture.prompt);
       },
       onLiveConfigChange: (config) => {
         if (config.baseUrl !== undefined) liveConfig.baseUrl = config.baseUrl;
@@ -246,10 +251,18 @@ export function createApp(options: AppOptions): void {
   scheduler.register(Dirty.Bars, () => {
     const record = engine.selectedRecord();
     if (!record) {
-      bars.update(null, null, null);
-      // Say what to do next, rather than leaving ten dead rows under an
-      // instruction to click them.
-      tailCaption.textContent = COPY.candidates.empty;
+      // Nothing committed yet, but the first token's distribution is already
+      // known, so show it. An opening screen of blank rows teaches nothing;
+      // this one is a working chart the sliders already act on.
+      const preview = previewDistribution();
+      if (preview) {
+        const display = engine.computeDisplay(preview, engine.getState().settings);
+        bars.update(preview, display, null);
+        tailCaption.textContent = `${COPY.candidates.preview} ${COPY.candidates.tailExplain(preview.tailMass)}`;
+      } else {
+        bars.update(null, null, null);
+        tailCaption.textContent = COPY.candidates.empty;
+      }
       return;
     }
     const display = engine.computeDisplay(record.distribution, engine.getState().settings);
@@ -281,7 +294,12 @@ export function createApp(options: AppOptions): void {
   scheduler.register(Dirty.Stats, () => {
     const record = engine.selectedRecord();
     if (!record) {
-      stats.update(null, null, null);
+      const preview = previewDistribution();
+      if (preview) {
+        stats.update(preview, engine.computeDisplay(preview, engine.getState().settings), null);
+      } else {
+        stats.update(null, null, null);
+      }
       return;
     }
     const display = engine.computeDisplay(record.distribution, engine.getState().settings);
@@ -353,6 +371,11 @@ export function createApp(options: AppOptions): void {
   });
 
   // ------------------------------------------------------------------ helpers
+
+  /** The first step's candidates, shown before anything has been sampled. */
+  function previewDistribution(): StepDistribution | null {
+    return mode === 'replay' ? (source as ReplaySource).entryDistribution : null;
+  }
 
   function makeSource(): SamplerSource {
     return mode === 'replay'
@@ -433,6 +456,9 @@ export function createApp(options: AppOptions): void {
   // not run requestAnimationFrame at all, and an app whose initial paint hangs
   // off one would show nothing until it became visible. Every later write still
   // goes through the frame scheduler.
+  // Replay is the default, so the prompt starts read-only and says why.
+  controls.setPromptEditable(false, COPY.prompt.replayNote);
+
   scheduler.mark(Dirty.All);
   scheduler.flushNow();
 }

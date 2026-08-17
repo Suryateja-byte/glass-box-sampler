@@ -57,6 +57,19 @@ export class ReplaySource implements SamplerSource {
     return this.fixture.prompt;
   }
 
+  /**
+   * The distribution for the very first token, available before anything has
+   * been sampled.
+   *
+   * It lets the page open on a real distribution -- the model's actual
+   * candidates for this prompt -- instead of ten blank rows and a row of dashes.
+   * The sliders work on it immediately, so the mechanism is demonstrable in the
+   * first ten seconds without pressing anything.
+   */
+  get entryDistribution(): StepDistribution | null {
+    return this.distributions.get(this.fixture.entry) ?? null;
+  }
+
   start(request: SourceRequest, sink: SourceSink): void {
     this.stop();
     this.running = true;

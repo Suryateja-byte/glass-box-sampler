@@ -767,3 +767,12 @@ body {
   outline-offset: 2px;
   border-radius: var(--radius-xs);
 }
+
+/* Read-only in replay mode, and visibly so: an editable-looking field that
+   discards what you type is worse than one that never invited you. */
+.prompt-input.is-readonly {
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  border-style: dashed;
+  cursor: default;
+}
