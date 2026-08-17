@@ -9,14 +9,14 @@ Live status of the build. Open `progress.html` for the same thing in a browser.
 | A — Harness, self-verified | **Done** |
 | B — Core pieces + coupled cluster | **Done** |
 | C — Walking skeleton + wave-0 evidence | **Done** |
-| D — Gauntlet waves (max 5) | 4 of 5 used; wave-3 verdict pending |
-| E — Cold-start acceptance | **Passed** once; re-running against the final build |
+| D — Gauntlet waves (max 5) | **5 of 5 used** |
+| E — Cold-start acceptance | **PASSED — 11 of 11**, on the final build |
 
 ## Gate status
 
 All measured by `npm run harness`. The figures below are from
-`evidence/wave-4/`, the most recent bundle, on a clean tree. Nothing here is a
-claim without a bundle behind it.
+`evidence/wave-8/`, the final bundle, on commit `9433654d` with a clean tree.
+Nothing here is a claim without a bundle behind it.
 
 | Gate | Status | Measured |
 |---|---|---|
@@ -322,12 +322,56 @@ was described as sampling-math only when it is 157 tests across six files.
   nondeterminism mock demonstrates the point: it drifts in the ninth decimal of
   a probability while every visible pixel stays identical.
 
-## Next action
+## Wave 4 — the prompt box was lying
 
-Read the wave-3 critic's verdict and the final cold-start result; act on
-whichever gap is larger.
+**Verdict on wave 3: FAIL.** A fourth critic verified the mathematics against
+hand-computed values across all three fixtures and found it exact everywhere —
+the temperature law to within 0.03 percentage points, entropy reconciling every
+time, off-rank-1 commits handled, T=0 collapsing to the greedy path. Then it
+typed a new prompt into the most inviting control on the page, pressed Run, and
+got the Eiffel Tower fixture back under a full panel of correct arithmetic
+describing a prompt that was no longer on screen.
+
+The Prompt field was an ordinary editable textarea in replay mode and silently
+inert — and the only copy bound to it read *"Replay runs offline from local
+fixtures. No request leaves the page."*, which a reader takes as "your prompt is
+handled locally" when the truth was "your prompt is discarded". It is now
+read-only in replay, visibly so, and says why; editable the moment Live is
+selected.
+
+Two critics in a row had also noted that the first ten seconds taught nothing.
+The first token's distribution is known before anything is sampled, so the page
+now opens on it, and the sliders act on it immediately.
+
+## Cold start — PASSED, 11 of 11
+
+A fresh agent installed and drove the finished build from the README alone, with
+no API key and without reading any source. Every item passed, including forking
+by mouse, **forking by keyboard alone**, and switching between branches in both
+directions. Artifacts in `evidence/cold-start/`.
+
+It still found two real defects, both fixed and re-measured:
+
+- **The keyboard route dead-ended.** Enter on a selected token did nothing
+  visible, and because the candidates render before the completion, reaching
+  them meant shift-tabbing backwards past the branch trail — thirteen presses to
+  reach rank 1. Enter now moves focus to the candidate list.
+- **Re-derivation was pinned to the old token count.** A T=2 run that ended early
+  at 39 tokens pinned every later setting to 39, so dragging back to a cold
+  temperature produced text cut off mid-word. A finished run is now re-derived to
+  its own end: the same drag yields 67 tokens and a complete sentence.
+
+Lighthouse accessibility dropped 100 → 95 during this work, which the harness
+caught. Diagnosed from the audit rather than guessed at: the completion carried
+`role="listbox"` while empty (invalid ARIA on the idle screen), and the candidate
+buttons' `aria-label` replaced their visible text rather than containing it,
+failing Label-in-Name and leaving a voice-control user unable to say what they
+could see. Both fixed; back to 100.
 
 ## Budget
 
-Waves used: 4 of 5. No piece has been parked — every gap a critic named has been
-measured, fixed, and re-measured rather than deferred.
+**Waves used: 5 of 5. Cold start passed.** Both stop conditions met.
+
+No piece was parked. Every gap a critic named was reproduced with
+instrumentation, fixed, and re-measured — and in three cases the measurement
+showed the fix had introduced something new, which was then fixed in turn.

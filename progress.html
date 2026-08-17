@@ -69,8 +69,7 @@
     <main>
       <h1>Glass-Box Sampler — build progress</h1>
       <p class="sub">
-        Updated at each milestone. Nothing here is claimed as passing without an evidence bundle
-        under <code>evidence/</code> to back it.
+        Final state. Every gate below is backed by <code>evidence/wave-8/</code>, produced by one command on a clean tree. The cold-start acceptance test passed 11 of 11 on this build.
       </p>
 
       <h2>Phases</h2>
@@ -78,8 +77,8 @@
         <div class="phase"><span class="phase-name">A — Harness, self-verified</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pass">DONE</span></div>
-        <div class="phase"><span class="phase-name">D — Gauntlet waves (4 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
-        <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pass">PASSED, RE-RUNNING</span></div>
+        <div class="phase"><span class="phase-name">D — Gauntlet waves (5 of 5 used)</span><span class="tag pass">DONE</span></div>
+        <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pass">PASSED 11/11</span></div>
       </div>
 
       <h2>Machine gates</h2>
@@ -91,7 +90,7 @@
           <tr><td>Zero console errors or warnings</td><td class="tag pass">PASS</td><td class="note">0 violations across every page the harness opened</td></tr>
           <tr><td>p95 frame time ≤ 16.7ms</td><td class="tag pass">PASS</td><td class="note">median p95 6.20ms, spread 0.00ms, zero long frames. The display runs ~164Hz, so this is "every frame on time" rather than headroom inside 16.7ms</td></tr>
           <tr><td>Lighthouse performance ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs, default simulated throttling</td></tr>
-          <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs</td></tr>
+          <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs. Dipped to 95 mid-build when a listbox role was applied to an empty container and a button aria-label replaced its visible text; the harness caught both.</td></tr>
           <tr><td>Replay determinism, byte-identical</td><td class="tag pass">PASS</td><td class="note">73,571 bytes identical across two fresh contexts; the rendered transcript matches too</td></tr>
           <tr><td>Usable at 375px and 1440px</td><td class="tag pass">PASS</td><td class="note">6 states at each width, no horizontal overflow</td></tr>
           <tr><td>prefers-reduced-motion honoured</td><td class="tag pass">PASS</td><td class="note">self-report, computed styles and the live animation timeline all clean</td></tr>
@@ -121,6 +120,27 @@
         <tbody>
 
 
+
+          <tr>
+            <td>Wave 3 FAIL: the prompt box was lying</td>
+            <td class="note">
+              The Prompt field was an editable textarea that replay mode silently ignored: type a new
+              prompt, press Run, and the old fixture streamed back under correct arithmetic describing
+              a prompt no longer on screen. Its only caption reassured the reader the prompt was
+              handled locally, when the truth was that it was discarded. Now read-only in replay, and
+              it says why.
+            </td>
+          </tr>
+          <tr>
+            <td>Cold start passed 11/11, and still found two bugs</td>
+            <td class="note">
+              A fresh agent ran the finished build from the README alone with no API key: install,
+              stream, both sliders, fork by mouse, fork by keyboard, branch switching, tests, gate
+              self-test. It also found that Enter on a token dead-ended the keyboard route, and that a
+              run which ended early pinned every later setting to that token count, truncating text
+              mid-word. Both fixed and re-measured.
+            </td>
+          </tr>
           <tr>
             <td>Wave 2 FAIL: the sliders did not do what the app said</td>
             <td class="note">
