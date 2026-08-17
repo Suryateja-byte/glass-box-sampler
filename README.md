@@ -5,8 +5,12 @@ token and, for each one, shows the top-10 candidate distribution it was drawn
 from — reshaped live by temperature and top-p, annotated with entropy and
 surprisal, and forkable at any step.
 
+**[Try it →](https://suryateja-byte.github.io/glass-box-sampler/)** — nothing to
+install. Press **Run**, or **D** for a scripted tour.
+
 **It runs entirely offline by default.** No API key, no network request, no
-account. The default source replays bundled fixtures.
+account. The default source replays bundled fixtures, so the hosted page above
+is the whole application rather than a front end for a service.
 
 ---
 

@@ -7,6 +7,19 @@ import { defineConfig } from 'vite';
  * never be baked into production output no matter what the environment holds.
  */
 export default defineConfig(({ command }) => ({
+  /**
+   * Relative asset URLs, so one build runs from any path.
+   *
+   * GitHub Pages serves a project site from /<repo>/ rather than from the root.
+   * Hardcoding that prefix would have produced a bundle that only works at one
+   * URL -- and `vite preview` honours `base`, so the harness, which drives
+   * http://localhost:4173/, would have been auditing a 404. A relative base
+   * resolves against whatever directory the page was loaded from, so the
+   * artifact CI publishes is byte-identical to the one the gates measure.
+   *
+   * Safe here because this is a single page with no client-side routing.
+   */
+  base: './',
   define: {
     __DEV_OPENAI_KEY__: JSON.stringify(
       command === 'serve' ? (process.env.OPENAI_API_KEY ?? '') : '',

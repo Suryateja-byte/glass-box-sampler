@@ -1,0 +1,57 @@
+# Builds the app and publishes it to GitHub Pages.
+#
+# The gates that can run without a display run here too, before anything is
+# published: types, then the 157 sampling-math tests. The browser gates
+# (frame time, Lighthouse, determinism, viewport, reduced motion) stay local --
+# they need a real compositor and a real vsync, and a headless CI runner would
+# report numbers that describe the runner rather than the app. `npm run harness`
+# remains the authority on those, and its bundles are committed.
+name: Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a superseded run has nothing to say.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.14'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
