@@ -3,7 +3,7 @@ import { rand01 } from '../core/rng';
 import { sampleIndex } from '../core/sample';
 import { applyNucleus, softmaxTemperature } from '../core/transform';
 import { Emitter } from './events';
-import { K } from './types';
+import { K, isResamplable } from './types';
 import type {
   Branch,
   DisplayDistribution,
@@ -158,6 +158,99 @@ export class Engine {
   }
 
   // ------------------------------------------------------------- intents
+
+  /**
+   * Re-derives every committed token under the current settings.
+   *
+   * This is what makes "move a slider and the token in front of you is redrawn"
+   * a fact rather than a claim. Without it the sliders reshape a chart while the
+   * text below it stays put, and the panel ends up asserting things that cannot
+   * both be true: a committed token drawn from outside the nucleus, at a
+   * probability the same panel prints as zero, under a temperature of 0 that the
+   * help text calls deterministic.
+   *
+   * It is affordable because the randomness is keyed by position. Nothing has to
+   * be replayed in order to arrive at the right random state -- the draw for
+   * step 12 of a branch is a pure function of (seed, branch, 12) -- so the whole
+   * path is a few hundred exponentials, recomputed inside the input handler.
+   *
+   * Forced choices from forks are honoured by rank. The token at that rank can
+   * change, because everything upstream of it may have changed; that is the
+   * honest consequence of re-sampling and not a special case to paper over.
+   */
+  resampleCommitted(source: SamplerSource): boolean {
+    if (!isResamplable(source)) return false;
+
+    const branch = this.state.branches.get(this.state.activeBranchId);
+    if (!branch) return false;
+
+    // Walk the lineage so each step is attributed to the branch that owns it:
+    // the RNG is keyed by branch, and a fork must not rewrite its parent's text.
+    const lineage: Branch[] = [];
+    let cursor: Branch | undefined = branch;
+    while (cursor) {
+      lineage.unshift(cursor);
+      cursor = cursor.parentId ? this.state.branches.get(cursor.parentId) : undefined;
+    }
+
+    const total = this.chainLength();
+    if (total === 0) return false;
+
+    const ownerOfStep: string[] = new Array<string>(total).fill(lineage[0]!.id);
+    const forced = new Map<number, number>();
+    for (const link of lineage) {
+      for (let step = link.forkStep; step < total; step += 1) ownerOfStep[step] = link.id;
+      if (link.parentId !== null) {
+        const first = link.tokens[0];
+        if (first) forced.set(link.forkStep, first.chosenIndex);
+      }
+    }
+
+    const settings: SamplerSettings = { ...this.state.settings };
+    const walked = source.walk(total, (distribution, step) => {
+      const display = this.computeDisplay(distribution, settings);
+      const override = forced.get(step);
+      if (override !== undefined && override < display.count) return override;
+      return sampleIndex(
+        this.nucleus,
+        display.count,
+        rand01(this.state.seed, ownerOfStep[step] ?? branch.id, step),
+      );
+    });
+
+    // Rebuild the records. Statistics are recomputed rather than carried over:
+    // they describe the distribution this token was actually drawn from, and
+    // that distribution has just changed.
+    const rebuilt: TokenRecord[] = [];
+    for (let step = 0; step < walked.chosen.length; step += 1) {
+      const distribution = walked.distributions[step]!;
+      const chosenIndex = walked.chosen[step]!;
+      const display = this.computeDisplay(distribution, settings);
+      const chosenProb = this.probabilityOf(display, chosenIndex);
+      rebuilt.push({
+        step,
+        chosenIndex,
+        distribution,
+        settings,
+        chosenProb,
+        surprisalBits: surprisalBits(chosenProb),
+        entropyBits: display.entropyBits,
+        origin: forced.has(step) ? 'forced' : 'sampled',
+      });
+    }
+
+    // Redistribute the rebuilt path back over the lineage, so each branch keeps
+    // holding only its own suffix.
+    for (const link of lineage) {
+      link.tokens.length = 0;
+    }
+    for (let step = 0; step < rebuilt.length; step += 1) {
+      const owner = this.state.branches.get(ownerOfStep[step] ?? branch.id);
+      owner?.tokens.push(rebuilt[step]!);
+    }
+
+    return true;
+  }
 
   setSettings(next: Partial<SamplerSettings>): void {
     const settings: SamplerSettings = {

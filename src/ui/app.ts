@@ -87,7 +87,7 @@ export function createApp(options: AppOptions): void {
     entropyHint: COPY.entropy.explain,
     chosenLabel: 'Chosen p',
     chosenHint:
-      'The probability these settings give the token that was committed. It moves with the sliders, like the accent bar above it; what the sampler actually faced is recorded on the token itself.',
+      'The probability of the token that was drawn at this step. In replay the completion is re-derived whenever the sliders move, so this is always a probability from inside the current nucleus.',
     nucleusLabel: 'Nucleus',
     nucleusHint: COPY.topP.explain,
     tailLabel: COPY.candidates.tailLabel,
@@ -114,10 +114,16 @@ export function createApp(options: AppOptions): void {
     engine.getState().settings,
     {
       onChange: (patch) => {
-        // The whole one-frame claim lives in these two lines: update state,
-        // mark dirty, return. The rAF requested here runs in this same frame.
+        // The whole one-frame claim lives here: update state, re-derive, mark
+        // dirty, return. The rAF requested by mark() runs in this same frame.
+        //
+        // Re-deriving the committed tokens is what makes the slider mean what
+        // the app says it means. Skipping it would leave the chart reshaping
+        // above a completion that never changes -- and, worse, would let a
+        // committed token sit outside the nucleus the panel had just drawn.
         engine.setSettings(patch);
-        scheduler.mark(Dirty.Bars | Dirty.Stats);
+        engine.resampleCommitted(source);
+        scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Stream);
       },
       onDragStateChange: (dragging) => bars.setDragging(dragging),
     },
@@ -370,11 +376,13 @@ export function createApp(options: AppOptions): void {
     reset: () => resetAll(),
     setTemperature: (value) => {
       engine.setSettings({ temperature: value });
-      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Controls);
+      engine.resampleCommitted(source);
+      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Stream | Dirty.Controls);
     },
     setTopP: (value) => {
       engine.setSettings({ topP: value });
-      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Controls);
+      engine.resampleCommitted(source);
+      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Stream | Dirty.Controls);
     },
     select: (step) => engine.select({ branchId: engine.getState().activeBranchId, step }),
     fork: async (step, rank) => {
@@ -406,7 +414,8 @@ export function createApp(options: AppOptions): void {
     ready: Promise.resolve(),
     setParams: (params) => {
       engine.setSettings(params);
-      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Controls);
+      engine.resampleCommitted(source);
+      scheduler.mark(Dirty.Bars | Dirty.Stats | Dirty.Stream | Dirty.Controls);
     },
     advanceToStep: (n) => engine.advanceToStep(n, makeSource()),
     runToEnd: () => engine.runToEnd(makeSource()),

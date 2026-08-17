@@ -135,12 +135,16 @@ export function mountStream(labels: {
       while (spans.length > records.length) {
         spans.pop()?.remove();
       }
+      // Drop everything from the first divergence onward, not just the span
+      // that diverged. Removing only the mismatched one left every later span
+      // orphaned in the DOM, so a re-sampled completion showed its new first
+      // token followed by the tail of the old one -- and since the tail usually
+      // dominates, the text looked unchanged when it had in fact been redrawn.
       for (let index = 0; index < spans.length; index += 1) {
         const record = records[index]!;
         const span = spans[index]!;
         if (span.dataset['token'] !== record.distribution.candidates[record.chosenIndex]?.text) {
-          span.remove();
-          spans.splice(index);
+          for (const stale of spans.splice(index)) stale.remove();
           break;
         }
       }

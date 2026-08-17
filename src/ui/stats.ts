@@ -36,10 +36,19 @@ function chosenProbability(
   if (!record) return null;
   const index = record.chosenIndex;
   const inNucleus = index < display.nucleusSize;
-  const probability = inNucleus
-    ? (display.nucleusProbs[index] ?? 0)
-    : (display.probs[index] ?? 0);
-  return { text: `${(probability * 100).toFixed(1)}%`, excluded: !inNucleus };
+
+  // In replay the committed token is always inside the nucleus, because the
+  // completion is re-derived whenever the sliders move. Live mode can produce
+  // the other case -- the model chose, then the viewer tightened top-p past its
+  // token. That reads as an em dash rather than as a number: quietly swapping to
+  // the pre-cut probability would print a figure on a different basis from
+  // everything beside it, under the same label.
+  if (!inNucleus) return { text: '—', excluded: true };
+
+  return {
+    text: `${((display.nucleusProbs[index] ?? 0) * 100).toFixed(1)}%`,
+    excluded: false,
+  };
 }
 
 interface Readout {

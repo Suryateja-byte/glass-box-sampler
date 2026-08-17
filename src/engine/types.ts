@@ -162,6 +162,36 @@ export interface SamplerSource {
   stop(): void;
 }
 
+/**
+ * A source whose whole path can be re-derived on demand.
+ *
+ * This is what makes the sliders honest. Without it, moving temperature after a
+ * token was committed leaves that token in place, and the panel ends up drawing
+ * a state that cannot exist: a committed token sitting outside the nucleus it
+ * was supposedly drawn from, at a probability the same panel prints as zero.
+ *
+ * A lattice can be re-walked because every candidate carries a continuation and
+ * the randomness is keyed by position rather than drawn from a stream, so the
+ * same settings always produce the same path. A live endpoint cannot -- those
+ * tokens are the model's, drawn under the settings the request carried -- which
+ * is why this is a capability some sources have rather than part of the base
+ * interface.
+ */
+export interface ResamplableSource extends SamplerSource {
+  /**
+   * Re-walks from the beginning, asking `decide` which candidate to take at
+   * each step, and stops after `maxSteps` or at end-of-sequence.
+   */
+  walk(
+    maxSteps: number,
+    decide: (distribution: StepDistribution, step: number) => number,
+  ): { distributions: StepDistribution[]; chosen: number[] };
+}
+
+export function isResamplable(source: SamplerSource): source is ResamplableSource {
+  return typeof (source as Partial<ResamplableSource>).walk === 'function';
+}
+
 // ---------------------------------------------------------------- events
 
 export type EngineEvent =

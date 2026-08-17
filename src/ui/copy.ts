@@ -207,7 +207,7 @@ export const COPY = {
      * cannot honour a slider you move mid-completion, and replay can.
      */
     liveHonesty:
-      'Slider values apply to the next request. A completion already streaming cannot be resampled retroactively — those tokens are the model’s, drawn under the settings the request was sent with. Replay is the exact mode: move a slider there and the token in front of you is redrawn.',
+      'Slider values apply to the next request. A completion already streaming cannot be resampled retroactively — those tokens are the model’s, drawn under the settings the request was sent with, so the sliders reshape the chart here without changing the text. Replay is the exact mode: move a slider there and the completion is redrawn from the first token.',
     replayExactness: 'Replay runs offline from local fixtures. No request leaves the page.',
   },
 

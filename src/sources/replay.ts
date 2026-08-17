@@ -112,6 +112,39 @@ export class ReplaySource implements SamplerSource {
     else this.timer = setTimeout(tick, this.cadenceMs);
   }
 
+  /**
+   * Re-derives a path from the entry node under a caller-supplied rule.
+   *
+   * Synchronous and allocation-light: ten exponentials and a comparison per
+   * step, over a few dozen steps. That is what lets the whole completion be
+   * redrawn inside a slider's input handler rather than merely relabelled.
+   */
+  walk(
+    maxSteps: number,
+    decide: (distribution: StepDistribution, step: number) => number,
+  ): { distributions: StepDistribution[]; chosen: number[] } {
+    const distributions: StepDistribution[] = [];
+    const chosen: number[] = [];
+    let nodeId = this.fixture.entry;
+
+    for (let step = 0; step < maxSteps; step += 1) {
+      const node = this.fixture.nodes[nodeId];
+      if (!node || node.eos || node.c.length === 0) break;
+      const distribution = this.distributions.get(nodeId);
+      if (!distribution) break;
+
+      const index = decide(distribution, step);
+      const edge = node.c[index];
+      if (!edge) break;
+
+      distributions.push(distribution);
+      chosen.push(index);
+      nodeId = edge[2];
+    }
+
+    return { distributions, chosen };
+  }
+
   stop(): void {
     this.running = false;
     if (this.timer !== null) {
