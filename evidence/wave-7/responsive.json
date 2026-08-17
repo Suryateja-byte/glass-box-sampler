@@ -1,0 +1,101 @@
+{
+  "verdict": "PASS",
+  "findings": [
+    {
+      "viewport": "1440",
+      "state": "loaded, before running",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "1440",
+      "state": "paused after 12 tokens",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "1440",
+      "state": "temperature dragged to 2.0",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "1440",
+      "state": "top-p tightened, cut candidates dimmed",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "1440",
+      "state": "branched from an alternative token",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "1440",
+      "state": "generation finished on the branch",
+      "overflows": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "loaded, before running",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "paused after 12 tokens",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "temperature dragged to 2.0",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "top-p tightened, cut candidates dimmed",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "branched from an alternative token",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    },
+    {
+      "viewport": "375",
+      "state": "generation finished on the branch",
+      "overflows": false,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "widestElements": []
+    }
+  ]
+}

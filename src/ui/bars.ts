@@ -40,6 +40,7 @@ interface Row {
   readonly percent: HTMLSpanElement;
   readonly cumulative: HTMLSpanElement;
   readonly after: HTMLSpanElement;
+  readonly spoken: HTMLSpanElement;
   lastGhost: number;
   lastCumulative: string;
   lastAfter: string;
@@ -156,7 +157,15 @@ export function mountBars(labels: {
     const after = document.createElement('span');
     after.className = 'bar-after';
 
-    button.append(rankLabel, token, track, percent, cumulative, after);
+    // The numeric columns are aria-hidden and restated in one hidden sentence:
+    // read as three bare percentages they are noise, and the accessible name
+    // must still begin with the visible token text.
+    for (const cell of [percent, cumulative, after]) cell.setAttribute('aria-hidden', 'true');
+
+    const spoken = document.createElement('span');
+    spoken.className = 'visually-hidden';
+
+    button.append(rankLabel, token, track, percent, cumulative, after, spoken);
     root.append(button);
     element.append(root);
 
@@ -171,6 +180,7 @@ export function mountBars(labels: {
       percent,
       cumulative,
       after,
+      spoken,
       lastScale: -1,
       lastGhost: -1,
       lastPercent: '',
@@ -198,7 +208,7 @@ export function mountBars(labels: {
           // button: an empty slot carries no information, and ten nameless
           // controls are noise to a screen reader and an accessibility defect.
           row.root.setAttribute('aria-hidden', 'true');
-          row.button.removeAttribute('aria-label');
+          row.spoken.textContent = '';
           row.lastState = 'empty';
           row.lastToken = '';
           row.lastPercent = '';
@@ -294,11 +304,9 @@ export function mountBars(labels: {
       // is pure waste, and it is waste on the one path the frame-time gate
       // measures.
       if (percentChanged || tokenChanged || stateChanged) {
-        row.button.setAttribute(
-          'aria-label',
+        row.spoken.textContent =
           labels.rowDescription(candidate.text, percentText, rank + 1) +
-            (inNucleus ? '' : labels.excludedSuffix),
-        );
+          (inNucleus ? '' : labels.excludedSuffix);
       }
     }
   };

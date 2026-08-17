@@ -97,6 +97,8 @@ export interface StreamHandle {
   sync(records: readonly TokenRecord[], selectedStep: number | null): void;
   clear(): void;
   onSelect(handler: (step: number) => void): void;
+  /** Fired when a token is activated, so focus can move on to the candidates. */
+  onActivate(handler: () => void): void;
 }
 
 export function mountStream(labels: {
@@ -115,7 +117,9 @@ export function mountStream(labels: {
   //
   // A listbox with a roving tabindex rather than sixty-odd tab stops: one stop
   // to enter the completion, then arrow keys to move along it.
-  element.setAttribute('role', 'listbox');
+  // The role is applied only once there are options to hold. A listbox with no
+  // option children is invalid ARIA, and on the idle screen -- before anything
+  // has been sampled -- there are none.
   element.tabIndex = 0;
 
   const placeholder = document.createElement('span');
@@ -125,6 +129,7 @@ export function mountStream(labels: {
 
   const spans: HTMLElement[] = [];
   let selectHandler: ((step: number) => void) | null = null;
+  let activateHandler: (() => void) | null = null;
   let selected: number | null = null;
 
   element.addEventListener('click', (event) => {
@@ -160,9 +165,16 @@ export function mountStream(labels: {
         next = spans.length - 1;
         break;
       case 'Enter':
-      case ' ':
-        next = current;
-        break;
+      case ' ': {
+        // Activating a token hands focus to the candidate list, because
+        // choosing one of those is the next step. Without this the keyboard
+        // route dead-ended: Enter appeared to do nothing, and reaching the
+        // candidates meant shift-tabbing backwards past the branch trail.
+        event.preventDefault();
+        selectHandler?.(current);
+        activateHandler?.();
+        return;
+      }
       default:
         return;
     }
@@ -197,6 +209,9 @@ export function mountStream(labels: {
       }
 
       if (records.length > 0) placeholder.remove();
+
+      if (records.length > 0) element.setAttribute('role', 'listbox');
+      else element.removeAttribute('role');
 
       for (let index = spans.length; index < records.length; index += 1) {
         const record = records[index]!;
@@ -251,6 +266,10 @@ export function mountStream(labels: {
 
     onSelect(handler) {
       selectHandler = handler;
+    },
+
+    onActivate(handler) {
+      activateHandler = handler;
     },
   };
 }

@@ -19,6 +19,9 @@ import type {
 
 export const ENGINE_VERSION = '1';
 
+/** Upper bound when re-deriving a finished run; the walk stops at EOS first. */
+const MAX_RESAMPLE_STEPS = 4096;
+
 /**
  * The single owner of generation state.
  *
@@ -196,7 +199,16 @@ export class Engine {
     const total = this.chainLength();
     if (total === 0) return false;
 
-    const ownerOfStep: string[] = new Array<string>(total).fill(lineage[0]!.id);
+    // A completed run is re-derived to its natural end, not to the old token
+    // count. A hot run that stopped early at 29 tokens would otherwise pin every
+    // later setting to 29, so dragging back to a cold temperature produced text
+    // truncated mid-word -- which reads as breakage rather than as re-sampling.
+    const limit = this.state.status === 'done' ? MAX_RESAMPLE_STEPS : total;
+
+    const ownerOfStep: string[] = new Array<string>(limit).fill(branch.id);
+    for (let step = 0; step < Math.min(total, limit); step += 1) {
+      ownerOfStep[step] = lineage[0]!.id;
+    }
     const forced = new Map<number, number>();
     for (const link of lineage) {
       for (let step = link.forkStep; step < total; step += 1) ownerOfStep[step] = link.id;
@@ -207,7 +219,7 @@ export class Engine {
     }
 
     const settings: SamplerSettings = { ...this.state.settings };
-    const walked = source.walk(total, (distribution, step) => {
+    const walked = source.walk(limit, (distribution, step) => {
       const display = this.computeDisplay(distribution, settings);
       const override = forced.get(step);
       if (override !== undefined && override < display.count) return override;

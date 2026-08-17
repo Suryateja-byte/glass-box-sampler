@@ -13,7 +13,8 @@ account. The default source replays bundled fixtures.
 ## Requirements
 
 - **Node 22.12 or newer** and npm 10+ (`node --version`)
-- A Chromium browser for the optional evidence harness
+- A Chromium browser, for the optional evidence harness only. If Playwright
+  reports a missing browser, run `npx playwright install chromium`.
 
 Tested on Windows 11 with Node 22.14.
 
@@ -46,18 +47,29 @@ Replay mode is on from the start.
    each one.
 2. Drag **Temperature** toward 2. The distribution flattens as you drag. Drag it
    toward 0 and it collapses onto the leading candidate.
-3. Drag **Top-p** down to about 0.4. Watch the `Σp` column: top-p keeps the
+3. Drag **Top-p** down. Watch the `Σp` column: top-p keeps the
    shortest run of candidates whose running total reaches p, and the hairline
    is drawn exactly where that happens. Dropped candidates lose their solid bar
    and read `—` in the `after` column, but keep a faint ghost bar at their
    pre-cut length so you can see what was discarded. The survivors grow past
    their ghosts — that overhang is the renormalisation.
-4. **Fork.** Select a token in the completion (click it, or focus the completion
-   and use the arrow keys), then **click one of the candidate bars**: the run
-   branches at that step, taking *that candidate* instead. The branch trail
-   above the completion lists every line you have opened, and clicking any chip
-   switches back to it.
+   On the peaked *Factual* fixture the leading candidate often exceeds p on its
+   own, so the nucleus collapses straight to `1 of 10`; try values near 0.98, or
+   switch to the *Creative* fixture, to watch the cut move through the list.
+4. **Fork.** Select a token in the completion, then choose one of the candidate
+   bars: the run branches at that step, taking *that candidate* instead.
+   - With a mouse: click the token, then click the bar.
+   - From the keyboard: Tab to the completion, move with the arrow keys, press
+     **Enter** to select — focus jumps to the candidate list — then Tab to the
+     candidate you want and press **Enter** again.
+
+   The branch trail above the completion lists every line you have opened, and
+   clicking any chip switches back to it.
 5. Press **D** for a scripted ~30 second demo of all of the above.
+
+The run button changes with the state: **Run**, then **Pause** while streaming,
+then **Resume** if you stop partway. Once a completion has finished it is
+disabled — press **Reset** to start another.
 
 Temperature and top-p are not display filters. In replay mode the whole
 completion is re-derived whenever you move a slider, so the text in front of you
@@ -160,7 +172,13 @@ tracks gate status and records approaches that failed.
 ## Troubleshooting
 
 **Port 4173 is in use.** The harness uses `--strictPort` deliberately and will
-fail rather than audit whatever else is on that port. Stop the other process.
+fail rather than audit whatever else is on that port — a stale server would mean
+grading a build that no longer exists. Stop the other process, or run just the
+gate self-test, which needs no fixed port:
+
+```bash
+npm run harness:selftest
+```
 
 **`npm run harness` says the served build does not match `dist/`.** Another
 server is holding the port. The harness refuses to grade a page it did not just

@@ -66,7 +66,7 @@ export function createApp(options: AppOptions): void {
   const bars = mountBars({
     regionLabel: COPY.a11y.candidatesRegion,
     rowDescription: (token, percent, rank) =>
-      `${COPY.a11y.forkButton(token)}. Rank ${rank}, ${percent}`,
+      `, rank ${rank}, probability ${percent}. ${COPY.a11y.forkButton(token)}`,
     excludedSuffix: ', excluded by top-p',
     droppedMark: '—',
     columnToken: 'token',
@@ -363,6 +363,13 @@ export function createApp(options: AppOptions): void {
 
   stream.onSelect((step) => {
     engine.select({ branchId: engine.getState().activeBranchId, step });
+  });
+
+  stream.onActivate(() => {
+    // The candidates are rendered before the completion, so tab order would
+    // send a keyboard user backwards to reach them. Move focus there directly.
+    scheduler.flushNow();
+    bars.element.querySelector<HTMLButtonElement>('button:not([disabled])')?.focus();
   });
 
   trail.onSelectBranch((branchId) => {
