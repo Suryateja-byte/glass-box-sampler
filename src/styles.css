@@ -752,3 +752,18 @@ body {
   color: var(--text-muted);
   letter-spacing: var(--tracking-wide);
 }
+
+/* An ancestor of the current line, still open and still reachable. */
+.trail-chip.is-ancestor {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+/* The completion is a listbox with a roving tabindex; its focus ring must be
+   visible on the token itself, not only on the container. */
+.stream:focus-visible,
+.tok:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}

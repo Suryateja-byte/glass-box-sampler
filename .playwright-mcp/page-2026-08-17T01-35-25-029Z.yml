@@ -1,0 +1,109 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - heading "Glass-Box Sampler" [level=1] [ref=e4]
+    - paragraph [ref=e5]: The candidate distribution behind every token a language model writes, and what temperature and top-p do to it.
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - heading "Sampling" [level=2] [ref=e8]
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Prompt
+          - textbox "Prompt" [ref=e12]: The Eiffel Tower is located in
+          - paragraph [ref=e13]: Replay runs offline from local fixtures. No request leaves the page.
+        - generic [ref=e14]:
+          - generic [ref=e15]: Fixture
+          - combobox "Fixture" [ref=e16]:
+            - option "Factual — peaked distributions" [selected]
+            - option "Creative — flat distributions"
+            - option "Code — bimodal distributions"
+        - generic [ref=e17]:
+          - button "Run" [ref=e18] [cursor=pointer]
+          - button "Reset" [ref=e19] [cursor=pointer]
+          - generic [ref=e20]: Press D for the demo
+        - group "Source" [ref=e21]:
+          - generic [ref=e23]:
+            - radio "Replay" [checked] [ref=e24]
+            - generic [ref=e25]: Replay
+          - generic [ref=e26]:
+            - radio "Live" [ref=e27]
+            - generic [ref=e28]: Live
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - generic [ref=e32]: Temperature
+            - status [ref=e33]: "0.80"
+          - slider "Temperature" [ref=e34]: "0.8"
+          - paragraph [ref=e35]: Divides every logit by T before the softmax. Below 1 sharpens the distribution toward the leading candidate; above 1 flattens it toward uniform. At 0 the sampler stops sampling and always takes the argmax.
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e38]: Top-p
+            - status [ref=e39]: "1.00"
+          - slider "Top-p" [ref=e40]: "1"
+          - paragraph [ref=e41]: "Keeps the shortest list of candidates whose probabilities sum to p, drops the rest, and renormalises what is left. The list is never empty: the leading candidate always survives, even when it alone exceeds p."
+    - generic [ref=e42]:
+      - heading "Candidates" [level=2] [ref=e43]
+      - paragraph [ref=e44]: The 10 highest-probability tokens at this step, after temperature and top-p. Bar length is probability. The accent bar is the token that was committed.
+      - list "Candidate distribution for the selected step" [ref=e45]:
+        - listitem [ref=e46]:
+          - generic [ref=e47]: token
+          - generic [ref=e49]: p
+          - generic [ref=e50]: Σp
+          - generic [ref=e51]: after
+        - listitem [ref=e52]:
+          - button [disabled] [ref=e53]:
+            - generic [ref=e54]: "1"
+        - listitem [ref=e56]:
+          - button [disabled] [ref=e57]:
+            - generic [ref=e58]: "2"
+        - listitem [ref=e60]:
+          - button [disabled] [ref=e61]:
+            - generic [ref=e62]: "3"
+        - listitem [ref=e64]:
+          - button [disabled] [ref=e65]:
+            - generic [ref=e66]: "4"
+        - listitem [ref=e68]:
+          - button [disabled] [ref=e69]:
+            - generic [ref=e70]: "5"
+        - listitem [ref=e72]:
+          - button [disabled] [ref=e73]:
+            - generic [ref=e74]: "6"
+        - listitem [ref=e76]:
+          - button [disabled] [ref=e77]:
+            - generic [ref=e78]: "7"
+        - listitem [ref=e80]:
+          - button [disabled] [ref=e81]:
+            - generic [ref=e82]: "8"
+        - listitem [ref=e84]:
+          - button [disabled] [ref=e85]:
+            - generic [ref=e86]: "9"
+        - listitem [ref=e88]:
+          - button [disabled] [ref=e89]:
+            - generic [ref=e90]: "10"
+      - paragraph
+      - generic [ref=e92]:
+        - term [ref=e93]: Entropy
+        - definition [ref=e94]: —
+        - term [ref=e95]: Chosen p
+        - definition [ref=e96]: —
+        - term [ref=e97]: Nucleus
+        - definition [ref=e98]: —
+        - term [ref=e99]: Top-10 coverage
+        - definition [ref=e100]: —
+    - generic [ref=e101]:
+      - heading "Completion" [level=2] [ref=e102]
+      - paragraph [ref=e103]: Click any candidate to fork from it.
+      - navigation "Branch trail" [ref=e104]:
+        - button "root" [ref=e105] [cursor=pointer]
+      - generic "Generated completion" [ref=e106]: Nothing sampled yet.
+      - generic [ref=e107]:
+        - generic [ref=e108]: Surprisal
+        - generic [ref=e109]: expected
+        - generic [ref=e110]:
+          - generic "0 bits and up" [ref=e111]: "0"
+          - generic "0.15 bits and up" [ref=e112]: "0.15"
+          - generic "0.5 bits and up" [ref=e113]: "0.5"
+          - generic "1.5 bits and up" [ref=e114]: "1.5"
+          - generic "3.5 bits and up" [ref=e115]: "3.5"
+        - generic [ref=e116]: bits
+        - generic [ref=e117]: surprising
+        - paragraph [ref=e118]: Tint and underline weight both encode surprisal. Neither carries it alone.

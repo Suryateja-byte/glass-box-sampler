@@ -37,6 +37,10 @@ export const COPY = {
       'The candidate distribution behind every token a language model writes, and what temperature and top-p do to it.',
   },
 
+  /** Sits under the Completion heading, where selecting is the action. */
+  completionHint:
+    'Select any token to see the distribution it was drawn from, by clicking it or by focusing the completion and using the arrow keys. Then click a candidate to fork from that step.',
+
   sections: {
     prompt: 'Prompt',
     controls: 'Sampling',
@@ -118,7 +122,7 @@ export const COPY = {
       total: number,
     ): string =>
       `Σp first reaches top-p = ${topP.toFixed(2)} at rank ${kept} (${percent(reached)}), so ranks ${kept + 1}–${total} are dropped and the survivors are renormalised. Faint bars are the distribution before that cut; the gap to the solid bar is the mass redistributed to it.`,
-    empty: 'No step selected. Pick a token in the completion to see the distribution it came from.',
+    empty: 'Nothing sampled yet. Press Run, and the distribution behind each token appears here as it is drawn.',
   },
 
   fork: {

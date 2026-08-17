@@ -17,6 +17,10 @@ account. The default source replays bundled fixtures.
 
 Tested on Windows 11 with Node 22.14.
 
+> On Node below 22.19 `npm install` prints one `EBADENGINE` warning for
+> `lighthouse`, which is a devDependency used only by `npm run harness`. The
+> install succeeds and Lighthouse runs; the warning is expected.
+
 ## Run it
 
 ```bash
@@ -27,8 +31,9 @@ npm install
 npm run dev
 ```
 
-Open the URL it prints (normally <http://localhost:5173>). Replay mode is on
-from the start.
+Open the URL it prints (normally <http://localhost:5173>; if that port is busy
+Vite picks the next one, so use the URL from the terminal rather than assuming).
+Replay mode is on from the start.
 
 > **Path note:** if you clone into a directory whose name contains spaces, quote
 > it: `git clone <url> "glass-box LLM sampler"`. The tooling handles spaced paths
@@ -41,19 +46,23 @@ from the start.
    each one.
 2. Drag **Temperature** toward 2. The distribution flattens as you drag. Drag it
    toward 0 and it collapses onto the leading candidate.
-3. Drag **Top-p** down to about 0.4. Candidates outside the nucleus dim and get
-   a struck-through percentage; a hairline marks the cutoff. They keep their
-   real length so you can see what was discarded.
-4. Click any token in the completion to select that step, then **click any
-   candidate bar** to fork: the run branches from that point, taking the token
-   you clicked. The branch trail above the completion tracks where you are, and
-   clicking an earlier chip returns you to it.
+3. Drag **Top-p** down to about 0.4. Watch the `Σp` column: top-p keeps the
+   shortest run of candidates whose running total reaches p, and the hairline
+   is drawn exactly where that happens. Dropped candidates lose their solid bar
+   and read `—` in the `after` column, but keep a faint ghost bar at their
+   pre-cut length so you can see what was discarded. The survivors grow past
+   their ghosts — that overhang is the renormalisation.
+4. **Fork.** Select a token in the completion (click it, or focus the completion
+   and use the arrow keys), then **click one of the candidate bars**: the run
+   branches at that step, taking *that candidate* instead. The branch trail
+   above the completion lists every line you have opened, and clicking any chip
+   switches back to it.
 5. Press **D** for a scripted ~30 second demo of all of the above.
 
-Temperature and top-p are not display filters. In replay mode the sampler
-genuinely redraws from the reshaped distribution, so moving a slider changes
-which tokens come out. Same seed and same settings always produce the same
-completion.
+Temperature and top-p are not display filters. In replay mode the whole
+completion is re-derived whenever you move a slider, so the text in front of you
+is rewritten, not just relabelled — set temperature to 0 and it collapses to the
+greedy path. Same seed and same settings always reproduce the same completion.
 
 ## Modes
 
@@ -83,9 +92,11 @@ build-time define is hard-wired to empty.
 
 ## Verify it
 
-Sampling-math tests — softmax with temperature, top-p truncation and
-renormalisation, entropy — against reference values computed independently in
-Python at 40 digits:
+The unit suite: 157 tests in about a second. The sampling maths — softmax with
+temperature, top-p truncation and renormalisation, entropy — is checked against
+reference values computed independently in Python at 40 digits; the rest covers
+the streaming parser, the engine's determinism and forking, and the replay
+fixtures.
 
 ```bash
 npm test
@@ -140,7 +151,7 @@ tracks gate status and records approaches that failed.
 | `npm run dev` | Dev server |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Serve the production build on :4173 |
-| `npm test` | Sampling-math unit tests |
+| `npm test` | Unit tests: sampling maths, engine, stream parser, fixtures |
 | `npm run harness` | Full evidence bundle |
 | `npm run harness:selftest` | Prove the gates can fail |
 | `npm run fixtures` | Regenerate the replay lattices |

@@ -108,6 +108,15 @@ export function mountStream(labels: {
   element.className = 'stream';
   element.dataset['testid'] = 'stream';
   element.setAttribute('aria-label', labels.regionLabel);
+  // Selecting a token is the first half of forking, so it has to be reachable
+  // without a mouse. The tokens were plain spans: clickable, but absent from
+  // the accessibility tree and unreachable by keyboard, which left the app's
+  // headline interaction available to pointer users only.
+  //
+  // A listbox with a roving tabindex rather than sixty-odd tab stops: one stop
+  // to enter the completion, then arrow keys to move along it.
+  element.setAttribute('role', 'listbox');
+  element.tabIndex = 0;
 
   const placeholder = document.createElement('span');
   placeholder.className = 'stream-placeholder';
@@ -123,6 +132,44 @@ export function mountStream(labels: {
     if (!target) return;
     const step = Number((target as HTMLElement).dataset['step']);
     if (Number.isFinite(step)) selectHandler?.(step);
+  });
+
+  element.addEventListener('keydown', (event) => {
+    if (spans.length === 0) return;
+    // Read the cursor from where focus actually is, not from the last rendered
+    // selection. The rendered value only catches up on the next animation
+    // frame, so several quick arrow presses would all compute from the same
+    // stale index and the caret would stick after one step.
+    const focused = spans.indexOf(document.activeElement as HTMLElement);
+    const current = focused >= 0 ? focused : (selected ?? 0);
+    let next: number | null = null;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        next = Math.min(spans.length - 1, current + 1);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        next = Math.max(0, current - 1);
+        break;
+      case 'Home':
+        next = 0;
+        break;
+      case 'End':
+        next = spans.length - 1;
+        break;
+      case 'Enter':
+      case ' ':
+        next = current;
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    selectHandler?.(next);
+    spans[next]?.focus();
   });
 
   return {
@@ -160,18 +207,37 @@ export function mountStream(labels: {
         span.dataset['step'] = String(record.step);
         span.dataset['token'] = text;
         span.textContent = displayToken(text).replace(/^·/, ' ');
-        span.title = labels.tokenTitle(
+        const description = labels.tokenTitle(
           text,
           `${(record.chosenProb * 100).toFixed(1)}%`,
           record.surprisalBits.toFixed(2),
         );
+        span.title = description;
+        // The title attribute is a mouse affordance; assistive technology needs
+        // the same information stated as a name.
+        span.setAttribute('role', 'option');
+        span.setAttribute('aria-label', description);
+        span.setAttribute('aria-selected', 'false');
+        span.tabIndex = -1;
         element.append(span);
         spans.push(span);
       }
 
       if (selected !== selectedStep) {
-        if (selected !== null) spans[selected]?.classList.remove('is-selected');
-        if (selectedStep !== null) spans[selectedStep]?.classList.add('is-selected');
+        const previous = spans[selected ?? -1];
+        if (previous) {
+          previous.classList.remove('is-selected');
+          previous.setAttribute('aria-selected', 'false');
+          previous.tabIndex = -1;
+        }
+        const current = spans[selectedStep ?? -1];
+        if (current) {
+          current.classList.add('is-selected');
+          current.setAttribute('aria-selected', 'true');
+          // Roving tabindex: the selected token is the one tab stop inside the
+          // completion, so focus returns to where the reader left it.
+          current.tabIndex = 0;
+        }
         selected = selectedStep;
       }
     },

@@ -1,4 +1,4 @@
-import type { Branch, GenerationState } from '../engine/types';
+import type { GenerationState } from '../engine/types';
 import { displayToken } from './bars';
 
 /**
@@ -19,6 +19,7 @@ export interface TrailHandle {
 export function mountTrail(labels: {
   regionLabel: string;
   rootLabel: string;
+  rootTitle: string;
   branchLabel: (token: string, step: number) => string;
   branchTitle: (token: string, step: number) => string;
 }): TrailHandle {
@@ -39,29 +40,36 @@ export function mountTrail(labels: {
     element,
 
     update(state) {
-      // Walk from the active branch back to the root, then reverse.
-      const lineage: Branch[] = [];
+      // EVERY branch gets a chip, not just the active line's ancestors.
+      //
+      // Showing only the ancestor chain meant that returning to the root made
+      // the branch you had just opened vanish from the interface: it still
+      // existed, but nothing could reach it, which is the opposite of what a
+      // trail is for. Listing them all keeps the promise that every line you
+      // open stays open.
+      const branches = [...state.branches.values()];
+      const isAncestorOfActive = new Set<string>();
       let cursor = state.branches.get(state.activeBranchId);
       while (cursor) {
-        lineage.unshift(cursor);
+        isAncestorOfActive.add(cursor.id);
         cursor = cursor.parentId ? state.branches.get(cursor.parentId) : undefined;
       }
 
-      // The trail only changes when a fork happens, which is rare, so a cheap
-      // signature check keeps it out of the streaming path entirely.
-      const signature = lineage.map((branch) => branch.id).join('>');
+      // Forking is rare, so a cheap signature check keeps this out of the
+      // streaming path entirely.
+      const signature = `${branches.map((b) => b.id).join(',')}|${state.activeBranchId}`;
       if (signature === lastSignature) return;
       lastSignature = signature;
 
       element.replaceChildren();
-      element.classList.toggle('is-branched', lineage.length > 1);
+      element.classList.toggle('is-branched', branches.length > 1);
 
-      lineage.forEach((branch, index) => {
+      branches.forEach((branch, index) => {
         if (index > 0) {
           const separator = document.createElement('span');
           separator.className = 'trail-separator';
           separator.setAttribute('aria-hidden', 'true');
-          separator.textContent = '/';
+          separator.textContent = '·';
           element.append(separator);
         }
 
@@ -70,13 +78,16 @@ export function mountTrail(labels: {
         chip.className = 'trail-chip';
         chip.dataset['branch'] = branch.id;
         chip.dataset['testid'] = 'trail-chip';
-        if (index === lineage.length - 1) {
+        if (branch.id === state.activeBranchId) {
           chip.classList.add('is-current');
           chip.setAttribute('aria-current', 'true');
+        } else if (isAncestorOfActive.has(branch.id)) {
+          chip.classList.add('is-ancestor');
         }
 
         if (branch.parentId === null) {
           chip.textContent = labels.rootLabel;
+          chip.title = labels.rootTitle;
         } else {
           const forced = branch.tokens[0];
           const token = forced

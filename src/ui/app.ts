@@ -98,6 +98,7 @@ export function createApp(options: AppOptions): void {
   const trail = mountTrail({
     regionLabel: COPY.a11y.branchesRegion,
     rootLabel: COPY.branches.root,
+    rootTitle: 'The original line, before any fork.',
     branchLabel: (token, step) => `${token} @ ${step}`,
     branchTitle: (token, step) => `${COPY.branches.explain} (${token}, step ${step})`,
   });
@@ -246,7 +247,9 @@ export function createApp(options: AppOptions): void {
     const record = engine.selectedRecord();
     if (!record) {
       bars.update(null, null, null);
-      tailCaption.textContent = '';
+      // Say what to do next, rather than leaving ten dead rows under an
+      // instruction to click them.
+      tailCaption.textContent = COPY.candidates.empty;
       return;
     }
     const display = engine.computeDisplay(record.distribution, engine.getState().settings);
