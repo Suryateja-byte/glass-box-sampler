@@ -39,8 +39,15 @@ interface Row {
   readonly percent: HTMLSpanElement;
   // Last written values, so an unchanged row costs a comparison instead of a
   // DOM write. Text writes are the expensive part of this render.
+  //
+  // The percentage caches the RENDERED STRING, not the probability it came
+  // from. Caching a rounded number was a real defect: two different
+  // probabilities that round alike -- 0.0003 and 0.00001 both round to zero at
+  // three decimal places -- would skip the write and leave the previous step's
+  // figure on screen. A readout that silently shows a stale number is worse
+  // than one that is slow.
   lastScale: number;
-  lastPermille: number;
+  lastPercent: string;
   lastToken: string;
   lastState: string;
 }
@@ -107,7 +114,7 @@ export function mountBars(labels: {
       fill,
       percent,
       lastScale: -1,
-      lastPermille: -1,
+      lastPercent: '',
       lastToken: '',
       lastState: '',
     });
@@ -123,10 +130,14 @@ export function mountBars(labels: {
         if (row.lastState !== 'empty') {
           row.root.className = 'bar-row is-empty';
           row.button.disabled = true;
+          // Hidden from assistive technology rather than left as an unnamed
+          // button: an empty slot carries no information, and ten nameless
+          // controls are noise to a screen reader and an accessibility defect.
+          row.root.setAttribute('aria-hidden', 'true');
           row.button.removeAttribute('aria-label');
           row.lastState = 'empty';
           row.lastToken = '';
-          row.lastPermille = -1;
+          row.lastPercent = '';
         }
         if (row.lastScale !== 0) {
           row.fill.style.transform = 'scaleX(0)';
@@ -150,11 +161,11 @@ export function mountBars(labels: {
         row.lastScale = scale;
       }
 
-      const permille = Math.round(probability * 1000);
-      const percentChanged = permille !== row.lastPermille;
+      const percentText = formatPercent(probability);
+      const percentChanged = percentText !== row.lastPercent;
       if (percentChanged) {
-        row.percent.textContent = formatPercent(probability);
-        row.lastPermille = permille;
+        row.percent.textContent = percentText;
+        row.lastPercent = percentText;
       }
 
       const label = displayToken(candidate.text);
@@ -169,6 +180,7 @@ export function mountBars(labels: {
         `${rank === display.nucleusSize - 1 && display.nucleusSize < count ? '-edge' : ''}`;
       const stateChanged = state !== row.lastState;
       if (stateChanged) {
+        row.root.removeAttribute('aria-hidden');
         row.root.className =
           'bar-row' +
           (inNucleus ? '' : ' is-excluded') +

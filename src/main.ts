@@ -38,16 +38,34 @@ const CATALOG = [
   { id: 'code', label: 'Code — bimodal distributions', prompt: 'def fibonacci(n):' },
 ] as const;
 
-const LOADERS: Record<string, () => Promise<{ default: FixtureFile }>> = {
+const LOADERS: Record<string, () => Promise<{ default: unknown }>> = {
   factual: () => import('./fixtures/factual.json'),
   creative: () => import('./fixtures/creative.json'),
   code: () => import('./fixtures/code.json'),
 };
 
+/**
+ * Checks the shape before trusting it.
+ *
+ * An imported JSON module arrives structurally typed -- `version` widens to
+ * `number`, the candidate tuples widen to arrays -- so it cannot satisfy
+ * FixtureFile without an assertion. Rather than assert blindly, verify the
+ * parts the walker actually depends on, so a malformed lattice fails here with
+ * a message instead of somewhere deep in the traversal.
+ */
+function asFixture(value: unknown): FixtureFile {
+  const fixture = value as FixtureFile;
+  const entry = fixture?.nodes?.[fixture.entry];
+  if (fixture?.version !== 1 || !fixture.id || !entry) {
+    throw new Error('Fixture is malformed: expected version 1 and a resolvable entry node.');
+  }
+  return fixture;
+}
+
 async function loadFixture(id: string): Promise<FixtureFile> {
   const loader = LOADERS[id] ?? LOADERS['factual']!;
   const module = await loader();
-  return module.default;
+  return asFixture(module.default);
 }
 
 function readNumber(params: URLSearchParams, key: string, fallback: number): number {

@@ -61,15 +61,24 @@ const EOS_ID = 'end';
  * Two decay terms, doing different jobs: the log term is the heavy Zipf body,
  * the linear one makes the last few candidates fall away faster than a pure
  * power law would, which is what real top-k tails do. Flatness interpolates
- * between the steep pair and the shallow one. The shallow end is deliberately
- * not (0, 0) -- a genuinely uniform tail is not a thing that happens, and it
- * would make the flat fixtures look synthetic in exactly the way this file is
- * trying to avoid.
+ * between the steep pair and the shallow one.
+ *
+ * Both ends are deliberately moderate. The signature of a real top-k list is a
+ * large gap between rank one and rank two followed by a *gentle* slide down the
+ * remaining nine -- roughly 0.2 to 1.0 nats per rank. A steeper family can hit
+ * any entropy you like by collapsing the tail onto rank two, but it produces
+ * rank-ten logprobs around -12 sitting under a rank-two of -3, which is not a
+ * shape any model emits. Restricting the family and solving the head instead is
+ * what keeps the emitted numbers looking like a recording.
  */
-const TAIL_LOG_STEEP = 2.8;
+const TAIL_LOG_STEEP = 1.6;
 const TAIL_LOG_SHALLOW = 0.35;
-const TAIL_LINEAR_STEEP = 0.7;
+const TAIL_LINEAR_STEEP = 0.35;
 const TAIL_LINEAR_SHALLOW = 0.06;
+
+/** The flatness a node prefers before its head band gets a say. */
+const FLATNESS_MIN = 0.22;
+const FLATNESS_MAX = 0.9;
 
 /** Seeded wobble applied to every tail logprob, in nats. */
 const TAIL_JITTER_NATS = 0.16;
@@ -182,33 +191,39 @@ function shape(head: number, flatness: number, jitter: readonly number[]): numbe
 }
 
 /**
- * Bisects flatness until the realised entropy hits `target`.
+ * Bisects the head probability until the realised entropy hits `target`, with
+ * the tail shape held fixed.
  *
- * Entropy rises monotonically with flatness -- flatness 0 dumps the whole tail
- * onto rank two, flatness 1 spreads it evenly -- so a bisection is exact and
- * needs no derivative. Returns null when the target lies outside what this head
- * can reach, which is the caller's signal to try a different head.
+ * Entropy falls monotonically as the head takes more of the mass, so the
+ * bisection is exact and needs no derivative. Solving this way round -- shape
+ * first, head second -- is the whole trick: the tail keeps a believable slope
+ * and the head moves to whatever the entropy demands, rather than the tail
+ * being crushed to compensate for a head that was fixed too early.
+ *
+ * Returns null when the target lies outside what this tail shape can reach.
  */
-function solveFlatness(
-  head: number,
+function solveHead(
+  flatness: number,
   jitter: readonly number[],
   target: number,
-): { readonly flatness: number; readonly probs: number[]; readonly entropy: number } | null {
-  if (entropyBits(shape(head, 0, jitter)) > target) return null;
-  if (entropyBits(shape(head, 1, jitter)) < target) return null;
+): { readonly head: number; readonly probs: number[]; readonly entropy: number } | null {
+  const lowest = 0.05;
+  const highest = 0.995;
+  if (entropyBits(shape(lowest, flatness, jitter)) < target) return null;
+  if (entropyBits(shape(highest, flatness, jitter)) > target) return null;
 
-  let lo = 0;
-  let hi = 1;
+  let lo = lowest;
+  let hi = highest;
   for (let i = 0; i < 60; i += 1) {
     const mid = (lo + hi) / 2;
-    if (entropyBits(shape(head, mid, jitter)) < target) lo = mid;
+    if (entropyBits(shape(mid, flatness, jitter)) > target) lo = mid;
     else hi = mid;
   }
-  const flatness = (lo + hi) / 2;
+  const head = (lo + hi) / 2;
   const probs = shape(head, flatness, jitter);
   const entropy = entropyBits(probs);
   if (Math.abs(entropy - target) > ENTROPY_TOLERANCE) return null;
-  return { flatness, probs, entropy };
+  return { head, probs, entropy };
 }
 
 // ------------------------------------------------------------------- solving
@@ -259,24 +274,17 @@ function solveNode(
 
   const band = spec.headBands[category] ?? DEFAULT_HEAD_BANDS[category];
   const [bandLo, bandHi] = band;
-  const preferred = bandLo + rng() * (bandHi - bandLo);
+  const preferred = FLATNESS_MIN + rng() * (FLATNESS_MAX - FLATNESS_MIN);
 
-  // What this band can reach at all, given the jitter this node happens to have.
-  const grid: { head: number; lo: number; hi: number }[] = [];
-  let reachLo = Infinity;
-  let reachHi = -Infinity;
-  for (let head = bandLo; head <= bandHi + 1e-9; head += 0.001) {
-    const p = Math.min(head, bandHi);
-    const lo = entropyBits(shape(p, 0, jitter));
-    const hi = entropyBits(shape(p, 1, jitter));
-    grid.push({ head: p, lo, hi });
-    if (lo < reachLo) reachLo = lo;
-    if (hi > reachHi) reachHi = hi;
-  }
+  // What this band can reach at all, given the jitter this node happens to
+  // have. Entropy falls with the head and rises with flatness, so the corners
+  // of the (head, flatness) rectangle searched below are the extremes.
+  const reachLo = entropyBits(shape(bandHi, FLATNESS_GRID_LO, jitter));
+  const reachHi = entropyBits(shape(bandLo, FLATNESS_GRID_HI, jitter));
 
   const [declaredLo, declaredHi] = spec.band;
-  const floor = Math.max(reachLo, declaredLo) + 1e-6;
-  const ceiling = Math.min(reachHi, declaredHi) - 1e-6;
+  const floor = Math.max(reachLo, declaredLo) + 1e-4;
+  const ceiling = Math.min(reachHi, declaredHi) - 1e-4;
   if (floor > ceiling) {
     throw new Error(
       `${spec.id}/${key}: a ${category} head in [${bandLo}, ${bandHi}] spans ` +
@@ -286,13 +294,13 @@ function solveNode(
   }
   const target = clamp(desired, floor, ceiling);
 
-  // Nearest workable head to the one this node would have preferred.
-  const ordered = grid
-    .filter((g) => g.lo <= target && g.hi >= target)
-    .sort((x, y) => Math.abs(x.head - preferred) - Math.abs(y.head - preferred));
+  // Nearest workable tail shape to the one this node would have preferred.
+  const flatnesses: number[] = [];
+  for (let f = FLATNESS_GRID_LO; f <= FLATNESS_GRID_HI; f += 0.01) flatnesses.push(f);
+  flatnesses.sort((x, y) => Math.abs(x - preferred) - Math.abs(y - preferred));
 
-  for (const candidate of ordered) {
-    const solved = solveFlatness(candidate.head, jitter, target);
+  for (const flatness of flatnesses) {
+    const solved = solveHead(flatness, jitter, target);
     if (solved === null) continue;
     const realisedHead = solved.probs[0] ?? 0;
     if (realisedHead < bandLo - 1e-6 || realisedHead > bandHi + 1e-6) continue;
@@ -315,8 +323,8 @@ function solveNode(
   }
 
   throw new Error(
-    `${spec.id}/${key}: no ${category} head in [${bandLo}, ${bandHi}] reaches ` +
-      `${target.toFixed(3)} bits.`,
+    `${spec.id}/${key}: no tail shape puts a ${category} head inside ` +
+      `[${bandLo}, ${bandHi}] at ${target.toFixed(3)} bits.`,
   );
 }
 
@@ -381,6 +389,12 @@ export interface CategoryStats {
   entropyLo: number;
   entropyHi: number;
   entropySum: number;
+  /** rank1 - rank2, in nats: how far clear of the field the top choice is. */
+  gapSum: number;
+  /** rank2 - rank5, in nats: how tightly the near-synonyms cluster. */
+  spreadSum: number;
+  /** (rank2 - rank10) / 8, in nats: the slope of the tail. */
+  slopeSum: number;
 }
 
 export interface BuildStats {
@@ -411,7 +425,11 @@ function noteCategory(stats: BuildStats, solved: Solved): void {
     entropyLo: Infinity,
     entropyHi: -Infinity,
     entropySum: 0,
+    gapSum: 0,
+    spreadSum: 0,
+    slopeSum: 0,
   };
+  const lp = solved.logprobs;
   entry.count += 1;
   entry.headLo = Math.min(entry.headLo, solved.head);
   entry.headHi = Math.max(entry.headHi, solved.head);
@@ -419,6 +437,9 @@ function noteCategory(stats: BuildStats, solved: Solved): void {
   entry.entropyLo = Math.min(entry.entropyLo, solved.entropy);
   entry.entropyHi = Math.max(entry.entropyHi, solved.entropy);
   entry.entropySum += solved.entropy;
+  entry.gapSum += (lp[0] ?? 0) - (lp[1] ?? 0);
+  entry.spreadSum += (lp[1] ?? 0) - (lp[4] ?? 0);
+  entry.slopeSum += ((lp[1] ?? 0) - (lp[K - 1] ?? 0)) / (K - 2);
   stats.byCategory.set(solved.category, entry);
 }
 
@@ -781,7 +802,10 @@ function report(stats: BuildStats, bytes: number): string[] {
       `    ${category.padEnd(8)} n=${String(entry.count).padStart(4)}  ` +
         `head ${entry.headLo.toFixed(3)}-${entry.headHi.toFixed(3)} ` +
         `(mean ${(entry.headSum / entry.count).toFixed(3)})  ` +
-        `entropy ${entry.entropyLo.toFixed(2)}-${entry.entropyHi.toFixed(2)} bits`,
+        `H ${entry.entropyLo.toFixed(2)}-${entry.entropyHi.toFixed(2)} bits  ` +
+        `gap ${(entry.gapSum / entry.count).toFixed(2)}  ` +
+        `rank2-5 spread ${(entry.spreadSum / entry.count).toFixed(2)}  ` +
+        `tail ${(entry.slopeSum / entry.count).toFixed(2)} nats/rank`,
     );
   }
   return lines;

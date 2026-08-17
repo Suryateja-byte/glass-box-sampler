@@ -163,12 +163,12 @@ export function s(
  * where a genuinely flat narrative cannot afford a 0.9 determiner.
  */
 export const DEFAULT_HEAD_BANDS: Record<TokenCategory, readonly [number, number]> = {
-  func: [0.7, 0.94],
-  punct: [0.74, 0.965],
+  func: [0.7, 0.96],
+  punct: [0.74, 0.97],
   content: [0.2, 0.55],
-  bound: [0.78, 0.94],
-  sub: [0.8, 0.95],
-  syntax: [0.9, 0.978],
+  bound: [0.8, 0.96],
+  sub: [0.82, 0.96],
+  syntax: [0.9, 0.97],
   ident: [0.2, 0.55],
 };
 

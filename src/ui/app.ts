@@ -378,5 +378,11 @@ export function createApp(options: AppOptions): void {
     startDemo: () => demo.run(),
   });
 
+  // The first render is flushed synchronously rather than waiting for a frame.
+  // A browser that is not compositing -- a background tab, a hidden pane -- may
+  // not run requestAnimationFrame at all, and an app whose initial paint hangs
+  // off one would show nothing until it became visible. Every later write still
+  // goes through the frame scheduler.
   scheduler.mark(Dirty.All);
+  scheduler.flushNow();
 }
