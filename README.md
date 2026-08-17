@@ -9,6 +9,15 @@ surprisal, and forkable at any step.
 Press **Run**, or **D** for a scripted tour.
 Also mirrored at [GitHub Pages](https://suryateja-byte.github.io/glass-box-sampler/).
 
+![Tokens stream into the completion while the candidate panel redraws for each
+one. The temperature slider sweeps from 0.7 to 2 and back down, flattening the
+distribution and then collapsing it onto a single candidate; top-p tightens and
+the discarded candidates fade to ghosts behind the survivors. A fork is taken
+from an alternative token and the new line runs to the end.](docs/demo.gif)
+
+<sub>The demo the **D** key runs, sped up ~2×. Same recording at full quality and
+speed: [docs/demo.mp4](docs/demo.mp4).</sub>
+
 **It runs entirely offline by default.** No API key, no network request, no
 account. The default source replays bundled fixtures, so the hosted page above
 is the whole application rather than a front end for a service.
