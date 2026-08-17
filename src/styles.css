@@ -6,6 +6,11 @@
  * are ever animated, and the bar rows have fixed geometry, so a bar update
  * cannot trigger layout. Anything that would reflow during streaming is either
  * given a fixed size or wrapped in `contain`.
+ *
+ * The second rule, for the reduced-motion gate: every `transition` in this file
+ * takes its duration from a --dur-* token. Those zero out under
+ * prefers-reduced-motion at the :root, so no component needs its own query and
+ * none can be forgotten.
  */
 
 *,
@@ -49,42 +54,125 @@ body {
 /* ------------------------------------------------------------------ header */
 
 #app {
-  max-width: 1180px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-8);
+  padding: var(--space-5) var(--space-5) var(--space-8);
 }
 
+/* Brand on the left, About on the right, and no rule underneath: the panels
+   below are already bounded boxes, so a divider here would be a second edge
+   doing the first one's job. */
 .app-header {
-  margin-bottom: var(--space-6);
-  padding-bottom: var(--space-5);
-  border-bottom: var(--border-width) solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding: var(--space-2) var(--space-1) var(--space-4);
 }
 
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.app-logo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+}
+
+/* The one serif line in the app. It names the thing; everything below it is a
+   working surface and stays in the UI stack. */
 .app-title {
-  margin: 0 0 var(--space-2);
-  font-size: var(--fs-xl);
-  line-height: var(--lh-xl);
-  font-weight: var(--weight-semibold);
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-serif);
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-tight);
 }
 
 .app-subtitle {
   margin: 0;
   max-width: 62ch;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: var(--fs-sm);
   line-height: var(--lh-sm);
+}
+
+.about-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.about-button:hover {
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
+
+/* ------------------------------------------------------------------ about */
+
+.about-dialog {
+  max-width: 34rem;
+  padding: var(--space-5);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+  border: var(--border-width) solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+}
+
+.about-dialog::backdrop {
+  background: rgb(0 0 0 / 0.65);
+}
+
+.about-title {
+  margin: 0 0 var(--space-3);
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-xl);
+  font-weight: var(--weight-regular);
+}
+
+.about-body {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+.about-close {
+  margin-top: var(--space-2);
 }
 
 /* ------------------------------------------------------------------ layout */
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
   grid-template-areas:
     'controls candidates'
     'completion completion';
-  gap: var(--space-5);
+  gap: var(--space-4);
   align-items: start;
 }
 
@@ -101,12 +189,21 @@ body {
 .panel {
   background: var(--surface-raised);
   border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+/* Title on the left, an optional badge on the right. */
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
 }
 
 .panel-title {
-  margin: 0 0 var(--space-1);
+  margin: 0;
   font-size: var(--fs-xs);
   line-height: var(--lh-xs);
   font-weight: var(--weight-semibold);
@@ -117,10 +214,27 @@ body {
 
 .panel-hint {
   margin: 0 0 var(--space-4);
-  max-width: 68ch;
-  color: var(--text-secondary);
+  max-width: 78ch;
+  color: var(--text-muted);
   font-size: var(--fs-xs);
-  line-height: var(--lh-xs);
+  line-height: var(--lh-sm);
+}
+
+/* States K, which is fixed. Bordered like a control and inert like a label,
+   because it reports a property of the endpoint rather than offering a choice. */
+.panel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  cursor: default;
 }
 
 /* ---------------------------------------------------------------- controls */
@@ -137,7 +251,7 @@ body {
 
 .field-label {
   display: block;
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
   font-size: var(--fs-xs);
   line-height: var(--lh-xs);
   font-weight: var(--weight-medium);
@@ -145,7 +259,7 @@ body {
 }
 
 .field-hint {
-  margin: var(--space-1) 0 0;
+  margin: var(--space-2) 0 0;
   font-size: var(--fs-micro);
   line-height: var(--lh-micro);
   color: var(--text-muted);
@@ -155,34 +269,102 @@ body {
 .text-input,
 .select {
   width: 100%;
-  padding: var(--space-2);
+  padding: var(--space-3);
+  /* Down to the app ground, not the panel's. That step is what makes a field
+     read as cut into the card rather than sitting on it. */
   background: var(--surface);
   color: var(--text-primary);
-  border: var(--border-width) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   font-size: var(--fs-sm);
   line-height: var(--lh-sm);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.prompt-input:hover,
+.text-input:hover,
+.select:hover {
+  border-color: var(--border-strong);
 }
 
 .prompt-input {
   font-family: var(--font-mono);
-  resize: vertical;
+  /* No resize grip: the status dot occupies that corner, and two affordances
+     in one 12px square is one too many. */
+  resize: none;
+  padding-right: var(--space-6);
+}
+
+.prompt-wrap {
+  position: relative;
+  display: flex;
+}
+
+/* Engine state, in the corner of the field it applies to. */
+.status-dot {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-round);
+  background: var(--status-ok);
+  transition: background-color var(--dur-base) var(--ease-out);
+}
+
+.status-dot[data-status='streaming'],
+.status-dot[data-status='paused'] {
+  background: var(--status-busy);
+}
+
+.status-dot[data-status='error'] {
+  background: var(--status-error);
+}
+
+.char-counter {
+  margin: var(--space-1) 0 0;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-muted);
+}
+
+/* The native arrow is drawn by the platform in the platform's colour. Replacing
+   it with a hairline chevron keeps the control in the same drawing as the rest
+   of the panel. The colour is literal because a data URI cannot read a custom
+   property -- it is --text-muted, and there is only one theme to keep it in
+   step with. */
+.select {
+  appearance: none;
+  padding-right: var(--space-6);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23949aa4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  background-size: 14px 14px;
+  cursor: pointer;
 }
 
 .transport {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  margin: 0;
   flex-wrap: wrap;
 }
 
 .button {
-  padding: var(--space-2) var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
   background: var(--surface);
   color: var(--text-primary);
   border: var(--border-width) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: var(--fs-sm);
   font-weight: var(--weight-medium);
   cursor: pointer;
@@ -198,7 +380,10 @@ body {
   cursor: default;
 }
 
+/* Run is the one filled control on the page, and it takes the remaining width:
+   the primary action should be the widest target in the panel. */
 .button-primary {
+  flex: 1 1 auto;
   background: var(--accent);
   color: var(--accent-on);
   border-color: var(--accent);
@@ -210,16 +395,27 @@ body {
 }
 
 .demo-hint {
+  flex-basis: 100%;
+  margin-top: var(--space-2);
+  text-align: center;
   font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
   color: var(--text-muted);
 }
 
 .radio {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  margin-right: var(--space-3);
+  gap: var(--space-2);
+  margin-right: var(--space-4);
   font-size: var(--fs-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.radio input[type='radio'] {
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .live-config {
@@ -230,20 +426,26 @@ body {
 
 .error-banner {
   margin: var(--space-3) 0 0;
-  padding: var(--space-2) var(--space-3);
-  border: var(--border-width) solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  border: var(--border-width) solid var(--status-error);
+  border-radius: var(--radius-md);
   background: var(--surface);
   color: var(--text-primary);
   font-size: var(--fs-xs);
-  line-height: var(--lh-xs);
+  line-height: var(--lh-sm);
 }
 
 /* ----------------------------------------------------------------- sliders */
 
+/* The sliders are their own component; this is the position they occupy in the
+   controls stack. */
+.sliders-slot {
+  margin-bottom: var(--space-5);
+}
+
 .sliders {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-5);
 }
 
 .slider-header {
@@ -262,7 +464,7 @@ body {
 .slider-value {
   font-family: var(--font-mono);
   font-variant-numeric: var(--font-numeric);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   color: var(--text-primary);
   /* Fixed width and contained: this text changes on every frame of a drag, and
      a shifting width would drag the label around with it. */
@@ -271,10 +473,49 @@ body {
   contain: content;
 }
 
+/* A hairline track and a small round thumb: the control should look like the
+   readout it drives, not like a platform widget parked in the panel.
+   accent-color stays set as the fallback for any engine that ignores the
+   pseudo-elements below -- an unstyled but visible control beats an invisible
+   styled one. */
 .slider-field input[type='range'] {
+  appearance: none;
   width: 100%;
-  margin: var(--space-1) 0 0;
+  height: 20px;
+  margin: var(--space-2) 0 0;
+  background: none;
   accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.slider-field input[type='range']::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: var(--radius-xs);
+  background: var(--bar-track);
+}
+
+.slider-field input[type='range']::-moz-range-track {
+  height: 3px;
+  border-radius: var(--radius-xs);
+  background: var(--bar-track);
+}
+
+.slider-field input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5.5px;
+  border: none;
+  border-radius: var(--radius-round);
+  background: var(--accent);
+}
+
+.slider-field input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: var(--radius-round);
+  background: var(--accent);
 }
 
 /* Raised out of footnote register. These sentences carry the concepts the app
@@ -284,8 +525,8 @@ body {
   margin: var(--space-2) 0 0;
   max-width: 46ch;
   font-size: var(--fs-xs);
-  line-height: var(--lh-xs);
-  color: var(--text-secondary);
+  line-height: var(--lh-sm);
+  color: var(--text-muted);
 }
 
 /* -------------------------------------------------------------------- bars */
@@ -298,22 +539,23 @@ body {
 
 .bar-row {
   position: relative;
-  height: 1.75rem;
+  height: 2.25rem;
 }
 
 .bar-button {
   display: grid;
-  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.75rem 4.75rem 4.75rem;
+  grid-template-columns: 1.75rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.5rem 4.5rem 5.5rem;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   width: 100%;
   height: 100%;
-  padding: 0 var(--space-1);
+  padding: 0 var(--space-2);
   background: none;
   border: 0;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   text-align: left;
   cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out);
 }
 
 .bar-button:hover:not(:disabled) {
@@ -343,7 +585,7 @@ body {
 
 .bar-track {
   position: relative;
-  height: 0.75rem;
+  height: 0.625rem;
   background: var(--bar-track);
   border-radius: var(--radius-xs);
   overflow: hidden;
@@ -352,8 +594,8 @@ body {
 /* The distribution before top-p cut it. When top-p is 1 this sits exactly
    underneath the fill and is invisible; as the nucleus tightens it stays put
    while the survivors grow past it, so the gap between the two layers is the
-   renormalisation made visible. */
-/* The ghost runs the full height of the track; the fill is inset above and
+   renormalisation made visible.
+   The ghost runs the full height of the track; the fill is inset above and
    below it. That stacking is what makes renormalisation legible: where a
    survivor has grown, the solid bar continues past the faint band behind it,
    and the length of that overhang IS the mass redistributed from the discarded
@@ -371,8 +613,8 @@ body {
 
 .bar-fill {
   position: absolute;
-  top: 22%;
-  bottom: 22%;
+  top: 18%;
+  bottom: 18%;
   left: 0;
   right: 0;
   transform-origin: left center;
@@ -395,7 +637,7 @@ body {
 .bar-percent {
   font-family: var(--font-mono);
   font-variant-numeric: var(--font-numeric);
-  font-size: var(--fs-micro);
+  font-size: var(--fs-xs);
   color: var(--text-secondary);
   text-align: right;
   contain: content;
@@ -424,7 +666,7 @@ body {
 }
 
 /* No strikethrough: the "was" prefix already says the value is historical, and
-   a rule through 11px tabular figures costs more legibility than it buys. */
+   a rule through tabular figures costs more legibility than it buys. */
 .bar-row.is-excluded .bar-percent {
   font-style: italic;
 }
@@ -445,23 +687,102 @@ body {
   background: var(--bar-cutoff);
 }
 
-.tail-caption {
-  margin: var(--space-3) 0;
-  max-width: 78ch;
+/* The running total. Top-p thresholds against this number, so it sits in the
+   chart rather than in a caption: the row where it first reaches p is the row
+   the hairline is drawn under. */
+.bar-cumulative {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
   font-size: var(--fs-xs);
-  line-height: var(--lh-xs);
-  color: var(--text-secondary);
+  color: var(--text-muted);
+  text-align: right;
+  contain: content;
+}
+
+.bar-row.is-nucleus-edge .bar-cumulative {
+  color: var(--text-primary);
+  font-weight: var(--weight-semibold);
+}
+
+/* The renormalised probability: the only column on the post-cut basis, and the
+   one whose value the solid bar draws. */
+.bar-after {
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-xs);
+  color: var(--text-primary);
+  text-align: right;
+  contain: content;
+}
+
+.bar-row.is-excluded .bar-after {
+  color: var(--text-muted);
+}
+
+/* Column headings. `min-height` rather than a fixed height: "AFTER TOP-P" wraps
+   to two lines in the narrow layouts and a fixed box would clip it. */
+.bar-header {
+  min-height: 1.5rem;
+  display: grid;
+  grid-template-columns: 1.75rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.5rem 4.5rem 5.5rem;
+  align-items: end;
+  gap: var(--space-3);
+  padding: 0 var(--space-2) var(--space-1);
+}
+
+.bar-header .bar-token,
+.bar-header .bar-percent,
+.bar-header .bar-cumulative,
+.bar-header .bar-after {
+  font-family: var(--font-sans);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-style: normal;
+}
+
+.bar-header .bar-track {
+  background: none;
+}
+
+.tail-caption {
+  margin: var(--space-4) 0 0;
+  max-width: 84ch;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-sm);
+  color: var(--text-muted);
 }
 
 /* ------------------------------------------------------------------- stats */
 
+/*
+ * Four readouts in a row, each a label over a value.
+ *
+ * `grid-auto-flow: column` over two rows puts dt k and dd k in column k, so the
+ * pairs stay a <dl> -- the markup says these are terms and definitions, which
+ * is what they are -- without a wrapper element per pair.
+ */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-  gap: var(--space-3);
-  margin: 0;
-  padding-top: var(--space-3);
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
   border-top: var(--border-width) solid var(--border);
+}
+
+/* One hairline per column boundary, drawn by both cells of the column so it
+   runs the full height of the strip. */
+.stats dt:nth-of-type(n + 2),
+.stats dd:nth-of-type(n + 2) {
+  border-left: var(--border-width) solid var(--border);
+  padding-left: var(--space-4);
 }
 
 .stat-label {
@@ -469,16 +790,62 @@ body {
   line-height: var(--lh-micro);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wide);
+  letter-spacing: var(--tracking-wider);
 }
 
 .stat-value {
-  margin: var(--space-1) 0 0;
+  margin: 0;
   font-family: var(--font-mono);
   font-variant-numeric: var(--font-numeric);
-  font-size: var(--fs-md);
+  font-size: var(--fs-readout);
+  line-height: var(--lh-readout);
   color: var(--text-primary);
   contain: content;
+}
+
+/* A committed token can fall outside the nucleus once top-p tightens past it:
+   the choice is history, the cut is current. Marked rather than hidden. */
+.stat-value.is-excluded {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+/* ------------------------------------------------------- completion panel */
+
+/*
+ * The transcript on the left, the key to it on the right. The legend is
+ * reference material -- it is read once and then glanced at -- so it sits
+ * beside the thing it explains rather than under it, where it would push the
+ * completion up out of view on a tall run.
+ */
+@media (min-width: 861px) {
+  .panel-completion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
+    grid-template-areas:
+      'head head'
+      'hint legend'
+      'trail legend'
+      'stream legend';
+    column-gap: var(--space-5);
+    align-items: start;
+  }
+
+  .panel-completion > .panel-head {
+    grid-area: head;
+  }
+  .panel-completion > .panel-hint {
+    grid-area: hint;
+  }
+  .panel-completion > .trail {
+    grid-area: trail;
+  }
+  .panel-completion > .stream {
+    grid-area: stream;
+  }
+  .panel-completion > .legend {
+    grid-area: legend;
+  }
 }
 
 /* ------------------------------------------------------------------ stream */
@@ -536,26 +903,37 @@ body {
   font-weight: var(--weight-semibold);
 }
 
+/* The completion is a listbox with a roving tabindex; its focus ring must be
+   visible on the token itself, not only on the container. */
+.stream:focus-visible,
+.tok:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
 /* ------------------------------------------------------------------- trail */
 
 .trail {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-1);
+  gap: var(--space-2);
   margin-bottom: var(--space-3);
   min-height: 1.75rem;
 }
 
 .trail-chip {
-  padding: var(--space-1) var(--space-2);
+  padding: var(--space-1) var(--space-3);
   background: var(--surface);
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
   color: var(--text-secondary);
   cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
 
 .trail-chip.is-current {
@@ -563,11 +941,104 @@ body {
   color: var(--text-primary);
 }
 
+/* An ancestor of the current line, still open and still reachable. */
+.trail-chip.is-ancestor {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
 .trail-separator {
   color: var(--text-muted);
 }
 
+/* ------------------------------------------------------------------ legend */
+
+/* A bordered box rather than a rule and a row of chips: the key is a different
+   kind of thing from the transcript beside it, and the border says so. */
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-xs);
+  color: var(--text-secondary);
+}
+
+.legend-title {
+  flex-basis: 100%;
+  margin-bottom: var(--space-1);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+}
+
+/* The expression, set in the face that means "this is notation". */
+.legend-formula {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-regular);
+  text-transform: none;
+  letter-spacing: var(--tracking-normal);
+}
+
+.legend-end {
+  color: var(--text-muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+.legend-ramp {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* The swatches reuse the .tok classes, so the key is painted by the same rules
+   as the text it describes and cannot drift out of step with it. The border is
+   the one thing added: at legend size a wash alone is too small to read as a
+   colour, and the box gives each step an edge to compare against. */
+.legend-swatch {
+  padding: 3px 7px;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-variant-numeric: var(--font-numeric);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-primary);
+  cursor: default;
+}
+
+/* Step 1 is the absence of a tint, so it is drawn as the absence of a box. */
+.legend-swatch.tok-s0 {
+  border-color: transparent;
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+
+.legend-note {
+  flex-basis: 100%;
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
 /* -------------------------------------------------------------- responsive */
+
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+  }
+}
 
 @media (max-width: 860px) {
   #app {
@@ -583,8 +1054,25 @@ body {
   }
 
   .app-title {
-    font-size: var(--fs-lg);
-    line-height: var(--lh-lg);
+    font-size: var(--fs-xl);
+    line-height: var(--lh-xl);
+  }
+
+  .app-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* The header's two ends stop competing for one line. */
+  .app-header {
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .bar-button,
+  .bar-header {
+    grid-template-columns: 1.5rem minmax(3rem, 4.5rem) minmax(0, 1fr) 3.75rem 3.75rem 4.5rem;
+    gap: var(--space-2);
   }
 }
 
@@ -603,12 +1091,12 @@ body {
 
   .bar-button,
   .bar-header {
-    grid-template-columns: 1.25rem minmax(0, 1fr) 3.5rem 3.5rem 3.5rem;
+    grid-template-columns: 1.25rem minmax(0, 1fr) 3.25rem 3.25rem 3.75rem;
     grid-template-areas:
       'rank token p sp after'
       'track track track track track';
     gap: var(--space-1) var(--space-2);
-    padding: var(--space-1) var(--space-1) var(--space-2);
+    padding: var(--space-2) var(--space-1);
   }
 
   .bar-rank {
@@ -632,147 +1120,97 @@ body {
 
   .bar-header {
     grid-template-areas: 'rank token p sp after';
-    height: auto;
+    align-items: end;
   }
 
   .bar-header .bar-track {
     display: none;
   }
-}
 
-/* A committed token can fall outside the nucleus once top-p tightens past it:
-   the choice is history, the cut is current. Marked rather than hidden. */
-.stat-value.is-excluded {
-  color: var(--text-muted);
-  text-decoration: line-through;
-}
+  /*
+   * Four readouts across a phone would give each about 70px, which the values
+   * do not fit. Two columns of two.
+   *
+   * Placed explicitly rather than reflowed. `grid-auto-flow: column` fills a
+   * whole column before starting the next, which over four rows would put the
+   * first two readouts above each other and the last two beside them -- so the
+   * strip would read across as 1, 3, 2, 4 while the markup says 1, 2, 3, 4.
+   * Naming the cell for each pair keeps the visual order and the DOM order the
+   * same thing (WCAG 1.3.2).
+   */
+  .stats {
+    grid-template-rows: repeat(4, auto);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--space-1);
+  }
 
-/* ------------------------------------------------------------------ legend */
+  .stats dt:nth-of-type(1) {
+    grid-area: 1 / 1;
+  }
+  .stats dd:nth-of-type(1) {
+    grid-area: 2 / 1;
+  }
+  .stats dt:nth-of-type(2) {
+    grid-area: 1 / 2;
+  }
+  .stats dd:nth-of-type(2) {
+    grid-area: 2 / 2;
+  }
+  .stats dt:nth-of-type(3) {
+    grid-area: 3 / 1;
+  }
+  .stats dd:nth-of-type(3) {
+    grid-area: 4 / 1;
+  }
+  .stats dt:nth-of-type(4) {
+    grid-area: 3 / 2;
+  }
+  .stats dd:nth-of-type(4) {
+    grid-area: 4 / 2;
+  }
 
-.legend {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: var(--border-width) solid var(--border);
-  font-size: var(--fs-xs);
-  line-height: var(--lh-xs);
-  color: var(--text-secondary);
-}
+  /* Only the boundary between the two columns keeps its rule. */
+  .stats dt:nth-of-type(n + 2),
+  .stats dd:nth-of-type(n + 2) {
+    border-left: 0;
+    padding-left: 0;
+  }
 
-.legend-title {
-  font-weight: var(--weight-medium);
-  color: var(--text-secondary);
-}
+  .stats dt:nth-of-type(2),
+  .stats dd:nth-of-type(2),
+  .stats dt:nth-of-type(4),
+  .stats dd:nth-of-type(4) {
+    border-left: var(--border-width) solid var(--border);
+    padding-left: var(--space-4);
+  }
 
-.legend-ramp {
-  display: inline-flex;
-}
+  /* Air between the two bands, since they are separate readouts, not rows of
+     one table. */
+  .stats dt:nth-of-type(3),
+  .stats dt:nth-of-type(4) {
+    margin-top: var(--space-4);
+  }
 
-/* The swatches reuse the .tok classes, so the key is painted by the same rules
-   as the text it describes and cannot drift out of step with it. */
-.legend-swatch {
-  padding: 2px 6px;
-  font-family: var(--font-mono);
-  font-variant-numeric: var(--font-numeric);
-  color: var(--text-primary);
-  cursor: default;
-}
-
-.legend-note {
-  flex-basis: 100%;
-  margin: var(--space-1) 0 0;
-  color: var(--text-muted);
-}
-
-/* The running total. Top-p thresholds against this number, so it sits in the
-   chart rather than in a caption: the row where it first reaches p is the row
-   the hairline is drawn under. */
-.bar-cumulative {
-  font-family: var(--font-mono);
-  font-variant-numeric: var(--font-numeric);
-  font-size: var(--fs-micro);
-  color: var(--text-muted);
-  text-align: right;
-  contain: content;
-}
-
-.bar-row.is-nucleus-edge .bar-cumulative {
-  color: var(--text-primary);
-  font-weight: var(--weight-semibold);
-}
-
-.bar-header {
-  height: 1.25rem;
-  display: grid;
-  grid-template-columns: 1.5rem minmax(5.5rem, 8rem) minmax(0, 1fr) 4.75rem 4.75rem 4.75rem;
-  align-items: end;
-  gap: var(--space-2);
-  padding: 0 var(--space-1);
-}
-
-.bar-header .bar-token,
-.bar-header .bar-percent,
-.bar-header .bar-cumulative {
-  font-size: var(--fs-micro);
-  color: var(--text-muted);
-  letter-spacing: var(--tracking-wide);
-}
-
-.bar-header .bar-track {
-  background: none;
-}
-
-@media (max-width: 860px) {
-  .bar-header {
-    grid-template-columns: 1.25rem minmax(3rem, 4.5rem) minmax(0, 1fr) 3.75rem 3.75rem 3.75rem;
-    gap: var(--space-1);
+  .stat-value {
+    font-size: var(--fs-lg);
+    line-height: var(--lh-lg);
   }
 }
 
-/* The renormalised probability: the only column on the post-cut basis, and the
-   one whose value the solid bar draws. */
-.bar-after {
-  font-family: var(--font-mono);
-  font-variant-numeric: var(--font-numeric);
-  font-size: var(--fs-micro);
-  color: var(--text-primary);
-  text-align: right;
-  contain: content;
-}
+@media (max-width: 480px) {
+  .panel {
+    padding: var(--space-4);
+  }
 
-.bar-row.is-excluded .bar-after {
-  color: var(--text-muted);
-}
-
-.bar-header .bar-after {
-  font-size: var(--fs-micro);
-  color: var(--text-muted);
-  letter-spacing: var(--tracking-wide);
-}
-
-/* An ancestor of the current line, still open and still reachable. */
-.trail-chip.is-ancestor {
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-}
-
-/* The completion is a listbox with a roving tabindex; its focus ring must be
-   visible on the token itself, not only on the container. */
-.stream:focus-visible,
-.tok:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: var(--radius-xs);
+  .app-header {
+    flex-direction: column;
+    padding-bottom: var(--space-3);
+  }
 }
 
 /* Read-only in replay mode, and visibly so: an editable-looking field that
    discards what you type is worse than one that never invited you. */
 .prompt-input.is-readonly {
-  background: var(--surface-raised);
   color: var(--text-secondary);
-  border-style: dashed;
   cursor: default;
 }

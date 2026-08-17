@@ -33,8 +33,23 @@ const spokenToken = (text: string): string =>
 export const COPY = {
   app: {
     title: 'Glass-Box Sampler',
-    subtitle:
-      'The candidate distribution behind every token a language model writes, and what temperature and top-p do to it.',
+    subtitle: 'See the candidate distribution behind every token a language model writes.',
+  },
+
+  /**
+   * The dialog behind the About button. Three paragraphs, in the order a reader
+   * needs them: what is on screen, which of the two modes they are looking at,
+   * and how to drive it without a mouse.
+   */
+  about: {
+    label: 'About',
+    title: 'What this shows',
+    body: [
+      'Every token a language model writes is a draw from a probability distribution over its whole vocabulary. This page shows the ten leading candidates at each step, the running total that top-p thresholds against, and what temperature and top-p do to both.',
+      'Replay is the exact mode. It runs offline from a recorded lattice in which every candidate carries a real continuation, so moving a slider re-derives the completion from the first token rather than restyling a chart. Live streams from an OpenAI-compatible endpoint you supply; there the endpoint does the sampling, so slider values apply to the next request and cannot reshape text that has already arrived.',
+      'Keyboard: D runs a scripted tour. Inside the completion, the arrow keys move between tokens and Enter opens the candidate list for that step, where Enter again forks a new line from it.',
+    ],
+    close: 'Close',
   },
 
   prompt: {
@@ -50,12 +65,12 @@ export const COPY = {
 
   /** Sits under the Completion heading, where selecting is the action. */
   completionHint:
-    'Select any token to see the distribution it was drawn from, by clicking it or by focusing the completion and using the arrow keys. Then click a candidate to fork from that step.',
+    'Select any token from the distribution above, or focus this box and use the arrow keys to choose. Press Enter to fork from that step.',
 
   sections: {
     prompt: 'Prompt',
     controls: 'Sampling',
-    candidates: 'Candidates',
+    candidates: 'Candidate distribution',
     completion: 'Completion',
     branches: 'Branches',
     source: 'Source',
@@ -93,12 +108,19 @@ export const COPY = {
       'Negative log2 of the probability the sampler gave the token it drew. 1 bit is a coin flip the model called; 8 bits is a 1-in-256 shot. The high-surprisal tokens are where a rerun would most likely diverge.',
     legendLow: 'expected',
     legendHigh: 'surprising',
+    /** Sits beside the legend title: the definition, stated rather than described. */
+    formula: '(−log₂ p)',
     /** The colour ramp is redundant with underline weight; say so where it is explained. */
     encoding: 'Tint and underline weight both encode surprisal. Neither carries it alone.',
   },
 
   candidates: {
-    heading: 'Candidates',
+    heading: 'Candidate distribution',
+    /**
+     * The badge over the chart. It states the fixed size of the head the
+     * endpoint returns; it is not a control, because K is not adjustable.
+     */
+    badge: (k: number): string => `Top ${k}`,
     explain: (k: number): string =>
       `The ${k} highest-probability tokens at this step, after temperature and top-p. Bar length is probability. The accent bar is the token that was committed.`,
     /** The honest caveat about seeing only the head of the distribution. */
@@ -256,6 +278,8 @@ export const COPY = {
     nucleusSize: (kept: number, total: number): string =>
       `${kept} of ${total} ${plural(total, 'candidate', 'candidates')} kept`,
     stepLabel: (step: number): string => `Step ${step}`,
+    /** Under the prompt box. The limit is enforced by the field's maxlength. */
+    charCount: (used: number, limit: number): string => `${used} / ${limit}`,
     /** A leading space is real data; the glyph is not. */
     leadingSpace: '·',
     newline: '↵',

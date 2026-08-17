@@ -86,10 +86,14 @@ export function mountStats(labels: {
     return { value: definition, last: labels.empty };
   };
 
+  // Reading order runs from the whole distribution to the single draw: how
+  // spread out it is, how much of it these ten cover, what the drawn token was
+  // worth, and how many candidates survived the cut. The testids ride on their
+  // own readouts, so this order is presentation only.
   const entropy = make(labels.entropyLabel, labels.entropyHint, 'entropy');
+  const tail = make(labels.tailLabel, labels.tailHint, 'tail-mass');
   const chosen = make(labels.chosenLabel, labels.chosenHint, 'chosen-prob');
   const nucleus = make(labels.nucleusLabel, labels.nucleusHint, 'nucleus-size');
-  const tail = make(labels.tailLabel, labels.tailHint, 'tail-mass');
 
   const write = (readout: Readout, text: string): void => {
     if (readout.last === text) return;

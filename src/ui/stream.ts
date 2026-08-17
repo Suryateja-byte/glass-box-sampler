@@ -45,6 +45,7 @@ export function surprisalBucket(bits: number): number {
  */
 export function mountSurprisalLegend(labels: {
   title: string;
+  formula: string;
   low: string;
   high: string;
   encoding: string;
@@ -53,9 +54,17 @@ export function mountSurprisalLegend(labels: {
   root.className = 'legend';
   root.dataset['testid'] = 'surprisal-legend';
 
+  // The title states the quantity and then defines it. A reader who knows what
+  // -log2 p is needs no legend; a reader who does not is owed the expression
+  // rather than a paraphrase of it.
   const title = document.createElement('span');
   title.className = 'legend-title';
   title.textContent = labels.title;
+
+  const formula = document.createElement('span');
+  formula.className = 'legend-formula';
+  formula.textContent = labels.formula;
+  title.append(' ', formula);
 
   const low = document.createElement('span');
   low.className = 'legend-end';

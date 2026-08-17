@@ -368,6 +368,60 @@ buttons' `aria-label` replaced their visible text rather than containing it,
 failing Label-in-Name and leaving a voice-control user unable to say what they
 could see. Both fixed; back to 100.
 
+## Visual redesign — one theme, one accent, and it is not a colour
+
+Not a gauntlet wave. A redesign against a supplied reference: the app is now an
+always-dark instrument rather than a light page with a dark alternative.
+
+**The light theme was deleted, not maintained.** Two palettes for a chart whose
+whole argument is *"the accent bar is the token that was committed"* meant two
+sets of contrast ratios to keep true, and the reference was dark. The former
+dark values moved into `:root`, `color-scheme: dark` went with them, and
+`index.html` carries the ground colour inline so the first frame is not a white
+flash.
+
+**The accent stopped being a hue.** It was cyan (`#4fa8dc`); it is now near-white
+(`#f1f2f4`). On a near-black ground a saturated accent competes with the warm
+surprisal wash for the reader's "this one is different" response, and the two
+mean unrelated things. Light is the scarcer resource here, so the committed
+token and the primary action take light, and colour is left to the one variable
+that is actually encoded by it. The amber ramp is unchanged.
+
+Structural changes, each for a reason rather than for the reference:
+
+- **The controls read in the order you touch them**: prompt, fixture, source,
+  sliders, run. The sliders used to sit *after* the whole control block as a
+  sibling panel; they now occupy a slot inside it.
+- **`setStatus` wrote `run.textContent`.** Harmless while the button was a bare
+  word — it would have silently deleted the play/pause glyph the moment one was
+  added. The label is now its own span, and the glyph switches with it, so the
+  control cannot describe itself two ways at once.
+- **A prompt limit that says where the end is.** `maxlength=256` with a live
+  counter, rather than a field that quietly stops accepting characters.
+- **"Top 10" is a badge, not a menu.** The reference drew it with a chevron. K is
+  fixed at 10 in `engine/types.ts`, so a chevron would have offered a choice that
+  does not exist.
+- **An About dialog**, native `<dialog>` for Escape, focus trap and restoration
+  at no cost. Nothing about it animates: the motion gate walks
+  `document.getAnimations()`, and an entrance animation here would be motion for
+  its own sake.
+- **The stats strip is placed, not reflowed.** Four readouts across the bottom of
+  the chart; at ≤720px, two columns of two. Column auto-flow filled each column
+  top-to-bottom, so the strip read across as 1, 3, 2, 4 while the markup said
+  1, 2, 3, 4, and the rule meant to divide the two columns landed inside one of
+  them instead. Caught in the 375px capture, fixed with explicit cells
+  (WCAG 1.3.2).
+
+One measured value changed: `--bar-fill` was lifted from `#767d88` to `#8b929d`
+(3.56:1 → 4.71:1 on the composited track). In a peaked distribution nine of the
+ten bars are a few pixels wide, and at the old value a sliver that narrow read as
+an empty track.
+
+Gate results for this work are recorded with the bundle below, measured on a
+clean tree. The two bundles produced while the redesign was still uncommitted
+were dropped rather than filed: they read TAINTED by construction, which is the
+harness saying the same thing wave-7 was dropped for.
+
 ## Budget
 
 **Waves used: 5 of 5. Cold start passed.** Both stop conditions met.

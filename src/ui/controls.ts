@@ -24,7 +24,52 @@ export interface ControlLabels {
   modelLabel: string;
   apiKeyLabel: string;
   apiKeyHint: string;
+  /** Spoken and shown on the status dot, one per engine state. */
+  statusLabels: Record<ControlStatus, string>;
+  /** `N / 256` under the prompt box. */
+  charCount: (used: number, limit: number) => string;
 }
+
+export type ControlStatus = 'idle' | 'streaming' | 'paused' | 'done' | 'error';
+
+/**
+ * The prompt limit. It only binds in live mode -- replay prompts are fixed by
+ * their fixture and the field is read-only there -- but the counter is shown in
+ * both, because a field that silently stops accepting characters is worse than
+ * one that says where the end is.
+ */
+const PROMPT_LIMIT = 256;
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * A 16px glyph from a path.
+ *
+ * Returns the path element alongside the svg so a caller can rewrite `d` in
+ * place: the Run button swaps between play and pause, and replacing the whole
+ * icon on every status change would churn the DOM on a control that is already
+ * being relabelled.
+ */
+function icon(d: string): { svg: SVGSVGElement; path: SVGPathElement } {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 16 16');
+  svg.setAttribute('width', '13');
+  svg.setAttribute('height', '13');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+
+  const path = document.createElementNS(SVG_NS, 'path');
+  path.setAttribute('d', d);
+  path.setAttribute('fill', 'currentColor');
+  svg.append(path);
+  return { svg, path };
+}
+
+const ICON_PLAY = 'M4.5 2.75 13 8l-8.5 5.25Z';
+const ICON_PAUSE = 'M4.5 3h2.75v10H4.5Zm4.25 0h2.75v10H8.75Z';
+/** An arrow bent back on itself: start again from the top. */
+const ICON_RESET =
+  'M8 3.4a4.6 4.6 0 1 0 4.4 3.26l1.34-.4A6 6 0 1 1 8 2v1.4Zm-.7-2.65 2.6 1.9-2.6 1.9Z';
 
 export interface FixtureOption {
   id: string;
@@ -34,7 +79,13 @@ export interface FixtureOption {
 
 export interface ControlsHandle {
   readonly element: HTMLElement;
-  setStatus(status: 'idle' | 'streaming' | 'paused' | 'done' | 'error'): void;
+  /**
+   * Where the sliders go. They are a separate component with its own grid, but
+   * they belong in the middle of this stack rather than after it, so the panel
+   * hands out the position instead of the caller stacking two siblings.
+   */
+  readonly slidersSlot: HTMLElement;
+  setStatus(status: ControlStatus): void;
   setPrompt(text: string): void;
   /**
    * Replay fixtures are keyed to their own prompt, so the field is read-only
@@ -77,22 +128,63 @@ export function mountControls(
   promptLabel.htmlFor = 'prompt-input';
   promptLabel.textContent = labels.promptLabel;
 
+  // The textarea sits in a positioned wrapper so the status dot can hang in its
+  // bottom-right corner without being a sibling that pushes layout around.
+  const promptWrap = document.createElement('div');
+  promptWrap.className = 'prompt-wrap';
+
   const prompt = document.createElement('textarea');
   prompt.id = 'prompt-input';
   prompt.dataset['testid'] = 'prompt-input';
   prompt.className = 'prompt-input';
   prompt.rows = 2;
   prompt.spellcheck = false;
+  prompt.maxLength = PROMPT_LIMIT;
   prompt.value = initial.prompt;
   prompt.setAttribute('aria-describedby', 'prompt-hint');
-  prompt.addEventListener('input', () => handlers.onPromptChange(prompt.value));
+
+  /**
+   * Engine state, as a dot.
+   *
+   * Colour is a summary here, never the carrier: the same state is already in
+   * the Run button's label, in the error banner's alert, and in this element's
+   * own title and text, which is why the dot can be three hues without putting
+   * anything out of reach of a reader who cannot tell them apart.
+   */
+  const statusDot = document.createElement('span');
+  statusDot.className = 'status-dot';
+  statusDot.dataset['status'] = 'idle';
+  statusDot.title = labels.statusLabels.idle;
+
+  const statusText = document.createElement('span');
+  statusText.className = 'visually-hidden';
+  statusText.textContent = labels.statusLabels.idle;
+  statusDot.append(statusText);
+
+  promptWrap.append(prompt, statusDot);
+
+  const counter = document.createElement('p');
+  counter.className = 'char-counter';
+  // The limit is already machine-readable on the field itself, so this is a
+  // sighted-reader convenience and would only be noise read aloud.
+  counter.setAttribute('aria-hidden', 'true');
+
+  const syncCounter = (): void => {
+    counter.textContent = labels.charCount(prompt.value.length, PROMPT_LIMIT);
+  };
+  syncCounter();
+
+  prompt.addEventListener('input', () => {
+    syncCounter();
+    handlers.onPromptChange(prompt.value);
+  });
 
   const promptHint = document.createElement('p');
   promptHint.className = 'field-hint';
   promptHint.id = 'prompt-hint';
   promptHint.textContent = labels.promptHint;
 
-  promptField.append(promptLabel, prompt, promptHint);
+  promptField.append(promptLabel, promptWrap, counter, promptHint);
 
   // --- fixture picker -------------------------------------------------------
   const fixtureField = document.createElement('div');
@@ -122,17 +214,27 @@ export function mountControls(
   const transport = document.createElement('div');
   transport.className = 'transport';
 
+  // Both buttons carry an icon, so their text lives in a span. Writing
+  // `button.textContent` on a status change -- which is what this used to do --
+  // would replace the icon along with the word.
   const run = document.createElement('button');
   run.type = 'button';
   run.className = 'button button-primary';
   run.dataset['testid'] = 'run';
-  run.textContent = labels.runLabel;
+  const runIcon = icon(ICON_PLAY);
+  const runLabel = document.createElement('span');
+  runLabel.className = 'button-label';
+  runLabel.textContent = labels.runLabel;
+  run.append(runIcon.svg, runLabel);
 
   const reset = document.createElement('button');
   reset.type = 'button';
   reset.className = 'button';
   reset.dataset['testid'] = 'reset';
-  reset.textContent = labels.resetLabel;
+  const resetLabel = document.createElement('span');
+  resetLabel.className = 'button-label';
+  resetLabel.textContent = labels.resetLabel;
+  reset.append(icon(ICON_RESET).svg, resetLabel);
   reset.addEventListener('click', handlers.onReset);
 
   const demoHint = document.createElement('span');
@@ -141,7 +243,7 @@ export function mountControls(
 
   transport.append(run, reset, demoHint);
 
-  let status: ControlsHandle['setStatus'] extends (s: infer S) => void ? S : never = 'idle';
+  let status: ControlStatus = 'idle';
   run.addEventListener('click', () => {
     if (status === 'streaming') handlers.onPause();
     else handlers.onRun();
@@ -245,22 +347,36 @@ export function mountControls(
   error.setAttribute('role', 'alert');
   error.hidden = true;
 
-  element.append(promptField, fixtureField, transport, sourceField, error);
+  // Reading order is the order of the decisions: what to sample, which fixture,
+  // where the numbers come from, how to reshape them, then run.
+  const slidersSlot = document.createElement('div');
+  slidersSlot.className = 'sliders-slot';
+
+  element.append(promptField, fixtureField, sourceField, slidersSlot, transport, error);
 
   return {
     element,
+    slidersSlot,
     setStatus(next) {
       status = next;
-      run.textContent =
+      runLabel.textContent =
         next === 'streaming'
           ? labels.pauseLabel
           : next === 'paused'
             ? labels.resumeLabel
             : labels.runLabel;
+      // The glyph has to agree with the word. A play triangle over "Pause" is a
+      // control that describes itself two different ways at once.
+      runIcon.path.setAttribute('d', next === 'streaming' ? ICON_PAUSE : ICON_PLAY);
       run.disabled = next === 'done';
+
+      statusDot.dataset['status'] = next;
+      statusDot.title = labels.statusLabels[next];
+      statusText.textContent = labels.statusLabels[next];
     },
     setPrompt(text) {
       prompt.value = text;
+      syncCounter();
     },
     setPromptEditable(editable, note) {
       prompt.readOnly = !editable;

@@ -12,6 +12,14 @@ export default defineConfig(({ command }) => ({
       command === 'serve' ? (process.env.OPENAI_API_KEY ?? '') : '',
     ),
   },
+  /**
+   * The dev server honours PORT when the environment sets one, so a second
+   * checkout (or a second agent) can serve the app without colliding with the
+   * default. Unset, it is Vite's 5173 as before.
+   */
+  server: {
+    port: Number(process.env['PORT']) || 5173,
+  },
   build: {
     target: 'es2022',
     cssMinify: true,

@@ -3,6 +3,7 @@ import type { FixtureFile, SamplerSource, StepDistribution } from '../engine/typ
 import { K } from '../engine/types';
 import { LiveSource, clearApiKey, setApiKey } from '../sources/live';
 import { ReplaySource } from '../sources/replay';
+import { mountAbout } from './about';
 import { mountBars } from './bars';
 import { mountControls, type FixtureOption } from './controls';
 import { COPY } from './copy';
@@ -35,6 +36,65 @@ export interface AppOptions {
   deterministic: boolean;
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * The brand mark: an isometric cube in outline.
+ *
+ * A glass box, drawn as one -- edges and nothing else, so the thing it names is
+ * legible at 40px and the mark carries no colour the palette has to account for.
+ * Kept in code rather than as an <img> because it must render in the same paint
+ * as the title beside it.
+ */
+function brandMark(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 32 32');
+  svg.setAttribute('width', '26');
+  svg.setAttribute('height', '26');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.35');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+
+  const outline = document.createElementNS(SVG_NS, 'path');
+  outline.setAttribute('d', 'M16 3 27.3 9.5 27.3 22.5 16 29 4.7 22.5 4.7 9.5Z');
+
+  const edges = document.createElementNS(SVG_NS, 'path');
+  edges.setAttribute('d', 'M16 16 16 3M16 16 27.3 22.5M16 16 4.7 22.5');
+  edges.setAttribute('stroke-opacity', '0.55');
+
+  svg.append(outline, edges);
+  return svg;
+}
+
+/** The glyph on the Top-K badge: three bars of a decaying distribution. */
+function barsGlyph(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 16 16');
+  svg.setAttribute('width', '12');
+  svg.setAttribute('height', '12');
+  svg.setAttribute('fill', 'currentColor');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+
+  for (const [y, width] of [
+    [3, 11],
+    [7, 7],
+    [11, 4],
+  ] as const) {
+    const bar = document.createElementNS(SVG_NS, 'rect');
+    bar.setAttribute('x', '2');
+    bar.setAttribute('y', String(y));
+    bar.setAttribute('width', String(width));
+    bar.setAttribute('height', '2');
+    bar.setAttribute('rx', '1');
+    svg.append(bar);
+  }
+  return svg;
+}
+
 export function createApp(options: AppOptions): void {
   const { root } = options;
 
@@ -53,15 +113,32 @@ export function createApp(options: AppOptions): void {
 
   // ------------------------------------------------------------------ layout
 
+  // This header is rebuilt here after boot replaces the static one in
+  // index.html. THE TWO MUST MATCH -- same elements, same classes, same text --
+  // or the largest contentful paint lands on a shape the app then moves.
   const header = document.createElement('header');
   header.className = 'app-header';
+
+  const brand = document.createElement('div');
+  brand.className = 'app-brand';
+
+  const logo = document.createElement('span');
+  logo.className = 'app-logo';
+  logo.append(brandMark());
+
+  const wordmark = document.createElement('div');
   const title = document.createElement('h1');
   title.className = 'app-title';
   title.textContent = COPY.app.title;
   const subtitle = document.createElement('p');
   subtitle.className = 'app-subtitle';
   subtitle.textContent = COPY.app.subtitle;
-  header.append(title, subtitle);
+  wordmark.append(title, subtitle);
+
+  brand.append(logo, wordmark);
+
+  const about = mountAbout(COPY.about);
+  header.append(brand, about.button);
 
   const bars = mountBars({
     regionLabel: COPY.a11y.candidatesRegion,
@@ -72,7 +149,7 @@ export function createApp(options: AppOptions): void {
     columnToken: 'token',
     columnProbability: 'p',
     columnCumulative: 'Σp',
-    columnAfter: 'after',
+    columnAfter: 'after top-p',
   });
 
   const stream = mountStream({
@@ -150,6 +227,8 @@ export function createApp(options: AppOptions): void {
       modelLabel: 'Model',
       apiKeyLabel: 'API key',
       apiKeyHint: 'Held in memory for this tab only. Never stored.',
+      statusLabels: COPY.status,
+      charCount: COPY.format.charCount,
     },
     fixtureOptions,
     { fixtureId: fixture.id, prompt: fixture.prompt },
@@ -199,13 +278,29 @@ export function createApp(options: AppOptions): void {
 
   // Panels ------------------------------------------------------------------
 
-  const panel = (heading: string, hint: string | null, ...children: Node[]): HTMLElement => {
+  /**
+   * A panel is a title row, an optional explanation, and its contents. The
+   * title row is a flex line rather than a bare heading so a panel can hang a
+   * badge off the right of it without the badge needing to know the layout.
+   */
+  const panel = (
+    heading: string,
+    hint: string | null,
+    badge: Node | null,
+    ...children: Node[]
+  ): HTMLElement => {
     const section = document.createElement('section');
     section.className = 'panel';
+
+    const head = document.createElement('div');
+    head.className = 'panel-head';
     const h = document.createElement('h2');
     h.className = 'panel-title';
     h.textContent = heading;
-    section.append(h);
+    head.append(h);
+    if (badge) head.append(badge);
+    section.append(head);
+
     if (hint) {
       const p = document.createElement('p');
       p.className = 'panel-hint';
@@ -216,6 +311,15 @@ export function createApp(options: AppOptions): void {
     return section;
   };
 
+  /** States the fixed size of the head the endpoint returns. Not a control. */
+  const topKBadge = document.createElement('span');
+  topKBadge.className = 'panel-badge';
+  topKBadge.title = COPY.candidates.headOnly;
+  topKBadge.append(barsGlyph());
+  const topKLabel = document.createElement('span');
+  topKLabel.textContent = COPY.candidates.badge(K);
+  topKBadge.append(topKLabel);
+
   const tailCaption = document.createElement('p');
   tailCaption.className = 'tail-caption';
   tailCaption.dataset['testid'] = 'tail-caption';
@@ -225,26 +329,43 @@ export function createApp(options: AppOptions): void {
   liveRegion.setAttribute('aria-live', 'polite');
   liveRegion.setAttribute('aria-atomic', 'true');
 
+  // The sliders live inside the controls stack, between Source and the
+  // transport buttons, so the panel reads top to bottom as the order you would
+  // actually touch things: what to sample, where from, how, then go.
+  controls.slidersSlot.append(sliders.element);
+
+  const completionPanel = panel(
+    COPY.sections.completion,
+    COPY.completionHint,
+    null,
+    trail.element,
+    stream.element,
+    mountSurprisalLegend({
+      title: COPY.surprisal.label,
+      formula: COPY.surprisal.formula,
+      low: COPY.surprisal.legendLow,
+      high: COPY.surprisal.legendHigh,
+      encoding: COPY.surprisal.encoding,
+    }),
+  );
+  completionPanel.classList.add('panel-completion');
+
   const layout = document.createElement('div');
   layout.className = 'layout';
   layout.append(
-    panel(COPY.sections.controls, null, controls.element, sliders.element),
-    panel(COPY.sections.candidates, COPY.candidates.explain(K), bars.element, tailCaption, stats.element),
+    panel(COPY.sections.controls, null, null, controls.element),
     panel(
-      COPY.sections.completion,
-      COPY.completionHint,
-      trail.element,
-      stream.element,
-      mountSurprisalLegend({
-        title: COPY.surprisal.label,
-        low: COPY.surprisal.legendLow,
-        high: COPY.surprisal.legendHigh,
-        encoding: COPY.surprisal.encoding,
-      }),
+      COPY.sections.candidates,
+      COPY.candidates.explain(K),
+      topKBadge,
+      bars.element,
+      tailCaption,
+      stats.element,
     ),
+    completionPanel,
   );
 
-  root.append(header, layout, liveRegion);
+  root.append(header, layout, liveRegion, about.dialog);
 
   // ------------------------------------------------------------- render pass
 
