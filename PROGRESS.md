@@ -15,7 +15,9 @@ Live status of the build. Open `progress.html` for the same thing in a browser.
 ## Gate status
 
 All measured by `npm run harness`. The figures below are from
-`evidence/wave-8/`, the final bundle, on commit `9433654d` with a clean tree.
+`evidence/wave-9/`, on commit `b4470df0` with a clean tree — the redesign
+build. The harness self-test row is the exception: it grades the harness against
+mock pages rather than the app, and its bundle is `evidence/selftest/`.
 Nothing here is a claim without a bundle behind it.
 
 | Gate | Status | Measured |
@@ -26,7 +28,7 @@ Nothing here is a claim without a bundle behind it.
 | p95 frame time ≤ 16.7ms | **PASS** | median p95 **6.20ms**, spread 0.00ms, 0 long frames |
 | Lighthouse performance ≥ 90 | **PASS** | **100** (median of 3, simulated throttling) |
 | Lighthouse accessibility ≥ 90 | **PASS** | **100** (median of 3) |
-| Replay determinism (byte-identical) | **PASS** | 73,571 bytes identical; rendered text also identical |
+| Replay determinism (byte-identical) | **PASS** | 113,467 bytes identical; rendered text also identical |
 | Usable at 375px and 1440px | **PASS** | 6 states each, no horizontal overflow |
 | prefers-reduced-motion honoured | **PASS** | self-report, computed styles and animation timeline all clean |
 
@@ -417,10 +419,22 @@ One measured value changed: `--bar-fill` was lifted from `#767d88` to `#8b929d`
 ten bars are a few pixels wide, and at the old value a sliver that narrow read as
 an empty track.
 
-Gate results for this work are recorded with the bundle below, measured on a
-clean tree. The two bundles produced while the redesign was still uncommitted
-were dropped rather than filed: they read TAINTED by construction, which is the
-harness saying the same thing wave-7 was dropped for.
+**All six gates PASS on `evidence/wave-9/`**, on commit `b4470df0` with a clean
+tree: frame p95 unchanged at 6.20ms with zero long frames, Lighthouse 100/100,
+determinism byte-identical, no horizontal overflow across 12 states at 375px and
+1440px, reduced motion clean by self-report and computed styles, console silent.
+
+Three bundles were produced before that one and all three were dropped, for the
+same reason wave-7 was: they ran against an uncommitted tree and read TAINTED by
+construction. The third of them is the reason `.claude/launch.json` is now
+tracked — a single untracked file is enough to taint every bundle the harness
+will ever produce here, so the choice was to track it or to accept that the
+dirty check had stopped meaning anything.
+
+One correction while re-pointing the table: the determinism row read *73,571
+bytes* against every bundle back to wave-0, but wave-8's own `verdict.json`
+records 113,467. The figure had been stale for some time and was never what the
+bundle behind it said. It now matches the measurement.
 
 ## Budget
 

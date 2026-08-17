@@ -69,7 +69,7 @@
     <main>
       <h1>Glass-Box Sampler — build progress</h1>
       <p class="sub">
-        Final state. Every gate below is backed by <code>evidence/wave-8/</code>, produced by one command on a clean tree. The cold-start acceptance test passed 11 of 11 on this build.
+        Final state, after the always-dark redesign. Every gate below is backed by <code>evidence/wave-9/</code>, produced by one command on a clean tree at commit <code>b4470df0</code>. The cold-start acceptance test passed 11 of 11 on the build before it.
       </p>
 
       <h2>Phases</h2>
@@ -91,7 +91,7 @@
           <tr><td>p95 frame time ≤ 16.7ms</td><td class="tag pass">PASS</td><td class="note">median p95 6.20ms, spread 0.00ms, zero long frames. The display runs ~164Hz, so this is "every frame on time" rather than headroom inside 16.7ms</td></tr>
           <tr><td>Lighthouse performance ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs, default simulated throttling</td></tr>
           <tr><td>Lighthouse accessibility ≥ 90</td><td class="tag pass">PASS</td><td class="note">100, median of 3 runs. Dipped to 95 mid-build when a listbox role was applied to an empty container and a button aria-label replaced its visible text; the harness caught both.</td></tr>
-          <tr><td>Replay determinism, byte-identical</td><td class="tag pass">PASS</td><td class="note">73,571 bytes identical across two fresh contexts; the rendered transcript matches too</td></tr>
+          <tr><td>Replay determinism, byte-identical</td><td class="tag pass">PASS</td><td class="note">113,467 bytes identical across two fresh contexts; the rendered transcript matches too</td></tr>
           <tr><td>Usable at 375px and 1440px</td><td class="tag pass">PASS</td><td class="note">6 states at each width, no horizontal overflow</td></tr>
           <tr><td>prefers-reduced-motion honoured</td><td class="tag pass">PASS</td><td class="note">self-report, computed styles and the live animation timeline all clean</td></tr>
         </tbody>
@@ -118,9 +118,17 @@
       <h2>Findings so far</h2>
       <table>
         <tbody>
-
-
-
+          <tr>
+            <td>Redesign: the stats strip read out of order on a phone</td>
+            <td class="note">
+              The app is now always dark with a near-white accent, since a saturated accent competed
+              with the surprisal wash for the reader's attention and the two mean unrelated things.
+              The one defect the redesign introduced was caught by the 375px capture: collapsing the
+              four readouts to two columns by grid auto-flow filled each column top to bottom, so the
+              strip read across as 1, 3, 2, 4 while the markup said 1, 2, 3, 4, and the rule meant to
+              divide the columns landed inside one of them. Fixed with explicit cells.
+            </td>
+          </tr>
           <tr>
             <td>Wave 3 FAIL: the prompt box was lying</td>
             <td class="note">
