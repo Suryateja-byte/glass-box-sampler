@@ -80,6 +80,11 @@ const TAIL_LINEAR_SHALLOW = 0.06;
 const FLATNESS_MIN = 0.22;
 const FLATNESS_MAX = 0.9;
 
+/** The shapes actually searched. Kept in one place so the reachability test
+ *  below and the search agree to the last hundredth. */
+const FLATNESS_GRID_LO = 0.02;
+const FLATNESS_GRID_HI = 0.985;
+
 /** Seeded wobble applied to every tail logprob, in nats. */
 const TAIL_JITTER_NATS = 0.16;
 
@@ -400,10 +405,10 @@ export interface CategoryStats {
 export interface BuildStats {
   readonly id: string;
   readonly spineTokens: number;
-  readonly nodes: number;
-  readonly bridgeNodes: number;
-  readonly bridges: number;
-  readonly candidates: number;
+  nodes: number;
+  bridgeNodes: number;
+  bridges: number;
+  candidates: number;
   entropyLo: number;
   entropyHi: number;
   entropySum: number;
@@ -587,7 +592,7 @@ export function buildFixture(spec: FixtureSpec): { file: FixtureFile; stats: Bui
     // same branch. Sharing matters most for the one-token escape a topped-up
     // distractor takes, which every content step in a region would otherwise
     // duplicate; the fixture stays a lattice either way.
-    const cacheKey = `${region.label} ${exit} ${tokens.join(' ')}`;
+    const cacheKey = JSON.stringify([region.label, exit, tokens]);
     const cached = bridgeCache.get(cacheKey);
     if (cached !== undefined) return cached;
 

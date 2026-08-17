@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { join } from 'node:path';
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { ConsoleGuard, evidenceDir, writeJson } from '../lib/gates';
 
 /**
@@ -70,6 +70,7 @@ test('two replay runs produce byte-identical output', async ({ browser }) => {
     await context.close();
   }
 
+  mkdirSync(join(evidence, 'determinism'), { recursive: true });
   writeFileSync(join(evidence, 'determinism', 'run-a.json'), records[0]!, 'utf8');
   writeFileSync(join(evidence, 'determinism', 'run-b.json'), records[1]!, 'utf8');
 
