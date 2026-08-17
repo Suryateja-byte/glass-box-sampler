@@ -9,3 +9,7 @@ dist/
 evidence/**/video/*.tmp
 test-results/
 playwright-report/
+
+# Vercel CLI: the local project link, and the env file it writes on `vercel link`.
+.vercel
+.env*
