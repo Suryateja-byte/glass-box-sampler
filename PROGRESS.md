@@ -9,13 +9,14 @@ Live status of the build. Open `progress.html` for the same thing in a browser.
 | A — Harness, self-verified | **Done** |
 | B — Core pieces + coupled cluster | **Done** |
 | C — Walking skeleton + wave-0 evidence | **Done** |
-| D — Gauntlet waves (max 5) | In flight — wave 0 judged |
-| E — Cold-start acceptance | Not started |
+| D — Gauntlet waves (max 5) | 4 of 5 used; wave-3 verdict pending |
+| E — Cold-start acceptance | **Passed** once; re-running against the final build |
 
 ## Gate status
 
-All measured by `npm run harness` against `evidence/wave-0/`, on commit
-`31586378`, clean tree. Nothing here is a claim without a bundle behind it.
+All measured by `npm run harness`. The figures below are from
+`evidence/wave-4/`, the most recent bundle, on a clean tree. Nothing here is a
+claim without a bundle behind it.
 
 | Gate | Status | Measured |
 |---|---|---|
@@ -249,6 +250,68 @@ below 720px the track wraps onto its own row: **309px instead of 30px**.
 No gate regressed: frame p95 unchanged at 6.20ms across all three waves,
 Lighthouse 100/100, determinism byte-identical (`evidence/wave-2/`).
 
+## Wave 3 — the sliders did not do what the app said they did
+
+**Verdict on wave 2: FAIL.** A third fresh critic confirmed the arithmetic was
+now exact everywhere it looked, then found something worse: **moving a slider
+never re-sampled the committed tokens, while the interface asserted in writing
+that it did.** At step 14 of the factual fixture with top-p = 0.50 the committed
+token sat at rank 5 carrying *both* `is-chosen` — the accent bar the caption
+calls "the token that was committed" — and `is-excluded` with `after = —`,
+beside a stat strip reading `Entropy 0.00 bits` and `Chosen p 0.9%`. Setting
+temperature to 0, documented in-app as "always takes the argmax", changed
+nothing.
+
+**Fix: make the claim true rather than soften it.** Replay sources expose
+`walk()`, and the engine re-derives every committed token whenever settings
+change. This is affordable *because* the randomness is keyed by position —
+nothing has to be replayed to reach the right random state — so the whole path
+is a few hundred exponentials inside the input handler. Measured on 20 tokens:
+
+| settings | completion |
+|---|---|
+| T = 0.80 | "Paris, France, on the Champ de Mars beside the Seine. The **riveted**-iron lattice" |
+| T = 2.00 | "western Paris. The iron tower pylon over landmark. This monument reaches about" |
+| T = 0.00 | "…The **wrought**-iron lattice" — every token rank 0 |
+
+Returning to T = 0.80 restores the original text exactly, so determinism holds.
+A committed token can no longer be excluded by top-p, because the completion is
+re-derived from the nucleus being drawn.
+
+**Cost: none measurable.** Re-sampling the entire completion on every drag frame
+left p95 at 6.20ms with zero long frames — the same figure as waves 0–2.
+
+A real bug surfaced while verifying it: the stream reconciler removed only the
+span that diverged while truncating its bookkeeping array, orphaning every later
+span in the DOM. A re-sampled completion showed its new first token followed by
+the tail of the old one, which made the text look unchanged when it had been
+redrawn.
+
+## Cold start — passed, and earned three fixes
+
+A fresh agent installed and drove the app from the README alone, no API key, no
+source reading. **All nine checklist items passed, including the fork on the
+first attempt with no guessing.** It also found real defects:
+
+- **Selecting a token was mouse-only.** Completion tokens were bare spans with
+  no role, tabindex or accessible name, so the first half of the headline
+  interaction was unreachable by keyboard or screen reader — while the candidate
+  bars beside them were proper buttons. The completion is now a listbox with a
+  roving tabindex. Verified from the keyboard end to end: six arrow presses,
+  Enter, then Enter on a candidate produces branch `root/6.2`.
+- **A branch became unreachable as soon as you left it.** The trail listed only
+  the active line's ancestors, so returning to root erased the chip for the
+  branch just created — contradicting copy promising "every line you have
+  opened". Every branch now gets a chip.
+- **The completion panel said "Click any candidate to fork from it" from a cold
+  load**, while all ten candidate buttons were disabled until a run produced
+  tokens. Obey the screen instead of the README and you click ten dead buttons.
+
+Plus README corrections: the stated Node floor did not match Lighthouse's
+requirement, so the expected `EBADENGINE` warning is now documented; the top-p
+section described a struck-through percentage that no longer exists; `npm test`
+was described as sampling-math only when it is 157 tests across six files.
+
 ## Failed approaches (kept so they are not retried)
 
 - **Idle-page frame measurement** — abandoned. Not a tuning problem: an idle
@@ -261,9 +324,10 @@ Lighthouse 100/100, determinism byte-identical (`evidence/wave-2/`).
 
 ## Next action
 
-Land the fixture lattices, then run the walking skeleton end to end and produce
-`evidence/wave-0/`.
+Read the wave-3 critic's verdict and the final cold-start result; act on
+whichever gap is larger.
 
 ## Budget
 
-Waves used: 0 of 5. No piece has been parked.
+Waves used: 4 of 5. No piece has been parked — every gap a critic named has been
+measured, fixed, and re-measured rather than deferred.

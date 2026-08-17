@@ -78,8 +78,8 @@
         <div class="phase"><span class="phase-name">A — Harness, self-verified</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">B — Core pieces and coupled cluster</span><span class="tag pass">DONE</span></div>
         <div class="phase"><span class="phase-name">C — Walking skeleton, wave-0 evidence</span><span class="tag pass">DONE</span></div>
-        <div class="phase"><span class="phase-name">D — Gauntlet waves (2 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
-        <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pending">—</span></div>
+        <div class="phase"><span class="phase-name">D — Gauntlet waves (4 of 5 used)</span><span class="tag pending">IN FLIGHT</span></div>
+        <div class="phase"><span class="phase-name">E — Cold-start acceptance</span><span class="tag pass">PASSED, RE-RUNNING</span></div>
       </div>
 
       <h2>Machine gates</h2>
@@ -120,6 +120,27 @@
       <table>
         <tbody>
 
+
+          <tr>
+            <td>Wave 2 FAIL: the sliders did not do what the app said</td>
+            <td class="note">
+              Moving a slider never re-sampled committed tokens, while the copy asserted it did.
+              A committed token could be drawn as both chosen and excluded, at a probability the
+              same panel printed as zero, under a temperature of 0 the help text called
+              deterministic. The engine now re-derives the whole completion whenever settings
+              change &mdash; affordable because the randomness is keyed by position, and measured at
+              no frame cost at all (p95 unchanged at 6.20ms).
+            </td>
+          </tr>
+          <tr>
+            <td>Cold start: the fork was mouse-only</td>
+            <td class="note">
+              A fresh agent passed all nine checklist items from the README alone, then noted that
+              completion tokens were bare spans with no role or tabindex &mdash; so selecting a token,
+              the first half of the headline interaction, was unreachable by keyboard. It is now a
+              listbox with a roving tabindex, verified forking end to end from the keyboard.
+            </td>
+          </tr>
           <tr>
             <td>Wave 0 FAIL: the panel did not reconcile</td>
             <td class="note">

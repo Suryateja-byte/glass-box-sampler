@@ -1,0 +1,28 @@
+{
+  "runs": [
+    {
+      "run": 1,
+      "performance": 100,
+      "accessibility": 95,
+      "throttlingMethod": "simulate",
+      "chromeVersion": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36"
+    },
+    {
+      "run": 2,
+      "performance": 100,
+      "accessibility": 95,
+      "throttlingMethod": "simulate",
+      "chromeVersion": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36"
+    },
+    {
+      "run": 3,
+      "performance": 100,
+      "accessibility": 95,
+      "throttlingMethod": "simulate",
+      "chromeVersion": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36"
+    }
+  ],
+  "medianPerformance": 100,
+  "medianAccessibility": 95,
+  "throttlingMethod": "simulate"
+}
